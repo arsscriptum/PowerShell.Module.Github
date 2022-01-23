@@ -528,50 +528,6 @@ function Save-Changes{
 
 
 
-function Set-RepositoryVisibility {
-     param(
-        [Parameter(Mandatory=$true,ValueFromPipeline=$true, 
-            HelpMessage="The repository") ]
-        [string]$Repository,
-        [switch]$Private
-     )
- 
-    try{
-        $Response = ''
-        $Token= Get-GithubAccessToken
-    
-        Write-ChannelMessage  "setting repository visibility for $Repository => Private $Private" -f DarkGray -NoNewLine
-        Write-verbose "GithubAccessToken $Token"
-        $privateStr = 'false'
-        if($Private) {$privateStr = 'true' }
-        
-        $headers = @{
-            "Content-Type"= "application/json"
-            "Authorization" = "$Token"
-        }
-        $bodyupdateAsJSON = @{
-            "private" = $privateStr
-        }
-        $bodyupdateAsJSON = $bodyupdateAsJSON | ConvertTo-Json |  ConvertFrom-Json -AsHashTable 
-        $headers = $headers | ConvertTo-Json |  ConvertFrom-Json -AsHashTable 
-        $RequestUrl = "https://api.github.com/user/repos" 
-
-         write-host "Invoke-RestMethod $RequestUrl -Method PATCH -Body $bodyupdateAsJSON -Headers $headers" -f DarkRed
-        $Response=(Invoke-RestMethod $RequestUrl -Method PATCH -Body $bodyupdateAsJSON -Headers $headers | select *)
-        Write-host "`n`nRESPONSE $Response`n`n" -f Cyan
-        $ResponseLen=$Response.Length
-        Write-verbose "ResponseLen: $ResponseLen"
-        $ParsedBuffer=$Response | ConvertFrom-Json
-        Write-verbose "ParsedBuffer $ParsedBuffer"
-        $RepoCount=$ParsedBuffer.Count
-        $ret=$ParsedBuffer | select name, private, clone_url, ssh_url, language, updated_at, description
-         Write-verbose "ret $ret"
-    } catch {
-        Show-ExceptionDetails($_)
-    }
-
- }  
-
 
 function Sync-UserRepositories
 {
@@ -1160,4 +1116,37 @@ function Remove-Repository {
         Write-Host "[ERROR] " -f DarkRed -NoNewLine
         Write-Host "message $_" -f DarkYellow
     }
- }  
+ } 
+
+
+
+
+function Set-RepositoryVisibility {
+     param(
+        [Parameter(Mandatory=$true,ValueFromPipeline=$true, 
+            HelpMessage="The repository name") ]
+        [string]$Name,      
+        [Parameter(Mandatory=$true,ValueFromPipeline=$true, 
+            HelpMessage="The repository visibility") ]
+        [ValidateSet('public','private')]
+        [string]$Visibility         
+     )
+ 
+    try{
+        $GhExe = (Get-Command gh.exe).Source
+        $result = &"$GhExe" "api" "-X" "PATCH" "/repos/arsscriptum/$Name" "-fvisibility=$Visibility" "--preview" "nebula"
+        $Obj = $result | ConvertFrom-Json
+        $vis = $Obj.visibility
+        $url = $Obj.html_url
+        $des = $Obj.description
+        $fna = $Obj.full_name
+        Write-Host "[set visibility] " -n -f DarkRed ; Write-Host "$vis" -f DarkYellow
+        Write-Host "[set visibility] " -n -f DarkRed ; Write-Host "$url" -f DarkYellow
+        Write-Host "[set visibility] " -n -f DarkRed ; Write-Host "$des" -f DarkYellow
+        Write-Host "[set visibility] " -n -f DarkRed ; Write-Host "$fna" -f DarkYellow
+    }
+    catch{
+         Show-ExceptionDetails($_) -ShowStack
+    }
+}
+  
