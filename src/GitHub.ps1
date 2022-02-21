@@ -20,6 +20,18 @@ function Script:AutoUpdateProgress {
     if($Script:StepNumber -lt $Script:TotalSteps){$Script:StepNumber++}
 }
 
+
+function Get-GithubModuleRegistryPath { 
+    [CmdletBinding(SupportsShouldProcess)]
+    param ()
+    if( $ExecutionContext -eq $null ) { throw "not in module"; return "" ; }
+    $ModuleName = ($ExecutionContext.SessionState).Module
+    $Path = "$ENV:OrganizationHKCU\$ModuleName"
+   
+    return $Path
+}
+
+
 function Get-GitRevision {
     [CmdletBinding(SupportsShouldProcess)]
     param (
@@ -69,12 +81,98 @@ function Get-GitRevision {
     }
 }
 
+function Initialize-GithubModule{
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, Position=0, HelpMessage="Overwrite if present")]
+        [ValidateNotNullOrEmpty()]
+        [String]$Token,      
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, Position=1,HelpMessage="Overwrite if present")]
+        [ValidateNotNullOrEmpty()]
+        [String]$User,   
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, Position=2,HelpMessage="Overwrite if present")]
+        [ValidateNotNullOrEmpty()]
+        [String]$ClonePath,   
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, Position=3,HelpMessage="Overwrite if present")]
+        [ValidateNotNullOrEmpty()]
+        [String]$Hostname,   
+        [Parameter(Mandatory=$false, ValueFromPipeline=$true,HelpMessage="Overwrite if present")]
+        [switch]$Force      
+    )
+    Set-GithubAccessToken -Token $Token -Force:$Force
+    Write-Host "✅ Set-GithubAccessToken $Token"
+    Set-GithubDefaultUsername -User $User
+    Write-Host "✅ Set-GithubDefaultUsername $User" 
+    Set-GithubDefaultServer -Hostname $Hostname
+    Write-Host "✅ Set-GithubDefaultServer $Hostname"
+    Set-GithubDefaultClonePath -Path $ClonePath
+    Write-Host "✅ Set-GithubDefaultClonePath $ClonePath"
+}
+
+
+function Set-GithubAccessToken {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, HelpMessage="Overwrite if present")]
+        [ValidateNotNullOrEmpty()]
+        [String]$Token,        
+        [Parameter(Mandatory=$false, ValueFromPipeline=$true, HelpMessage="Overwrite if present")]
+        [switch]$Force      
+    )
+    $RegPath = Get-GithubModuleRegistryPath
+    if( $RegPath -eq "" ) { throw "not in module"; return ;}
+    $TokenPresent = Test-RegistryValue -Path "$RegPath" -Entry 'access_token'
+    
+    if( $TokenPresent ){ 
+        Write-Verbose "Token already configured"
+        if($Force -eq $False){
+            return;
+        }
+    }
+    $ret = New-RegistryValue -Path "$RegPath" -Name 'access_token' -Value $Token -Type 'string'
+    [environment]::SetEnvironmentVariable('GITHUB_ACCESSTOKEN',"$Token",'Process')
+    return $ret    
+}
+function Set-GithubDefaultClonePath {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, HelpMessage="Overwrite if present")]
+        [ValidateNotNullOrEmpty()]
+        [String]$Path    
+    )
+    $RegPath = Get-GithubModuleRegistryPath
+    if( $RegPath -eq "" ) { throw "not in module"; return ;}
+
+    $ret = New-RegistryValue -Path "$RegPath" -Name 'default_clone_path' -Value $Path -Type 'string'
+    [environment]::SetEnvironmentVariable('GITHUB_DEFAULT_CLONE_PATH',"$Path",'Process')
+    return $ret    
+}
+
+function Set-GithubDefaultServer {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, HelpMessage="Overwrite if present")]
+        [ValidateNotNullOrEmpty()]
+        [String]$Hostname    
+    )
+    $RegPath = Get-GithubModuleRegistryPath
+    if( $RegPath -eq "" ) { throw "not in module"; return ;}
+
+    $ret = New-RegistryValue -Path "$RegPath" -Name 'hostname' -Value $Hostname -Type 'string'
+    [environment]::SetEnvironmentVariable('GITHUB_SERVER',"$Hostname",'Process')
+    return $ret    
+}
+
 function Get-GithubAccessToken {
     [CmdletBinding(SupportsShouldProcess)]
     param ()
-    $Token = (Get-ItemProperty -Path "$ENV:OrganizationHKCU\github.com" -Name 'access_token' -ErrorAction Ignore).access_token
-    if( $Token -ne $null ) { return $Token  }
-    if( $Env:GITHUB_ACCESSTOKEN -ne $null ) { return $Env:GITHUB_ACCESSTOKEN  }
+    $RegPath = Get-GithubModuleRegistryPath
+    $TokenPresent = Test-RegistryValue -Path "$RegPath" -Entry 'access_token'
+    if( $TokenPresent -eq $true ) {
+        $Token = Get-RegistryValue -Path "$RegPath" -Entry 'access_token'
+        return $Token
+    }
+    if( $Env:REDDIT_ACCESSTOKEN -ne $null ) { return $Env:REDDIT_ACCESSTOKEN  }
     return $null
 }
 
@@ -84,8 +182,10 @@ function Set-GithubDefaultUsername {
         [Parameter(Mandatory=$true, ValueFromPipeline=$true, HelpMessage="Git Username")]
         [String]$User      
     )
-    $ok = Set-RegistryValue  "$ENV:OrganizationHKCU\github.com" "default_username" "$User"
-    [environment]::SetEnvironmentVariable('DEFAULT_GIT_USERNAME',"$User",'User')
+    $RegPath = Get-GithubModuleRegistryPath
+    if( $RegPath -eq "" ) { throw "not in module"; return ;}
+    $ok = Set-RegistryValue  "$RegPath" "default_username" "$User"
+    [environment]::SetEnvironmentVariable('DEFAULT_GIT_USERNAME',"$User",'Process')
     return $ok
 }
 
@@ -96,7 +196,8 @@ function Set-GithubDefaultUsername {
 function Get-GithubDefaultUsername {
     [CmdletBinding(SupportsShouldProcess)]
     param ()
-    $User = (Get-ItemProperty -Path "$ENV:OrganizationHKCU\github.com" -Name 'default_username' -ErrorAction Ignore).default_username
+    $RegPath = Get-GithubModuleRegistryPath
+    $User = (Get-ItemProperty -Path "$RegPath" -Name 'default_username' -ErrorAction Ignore).default_username
     if( $User -ne $null ) { return $User  }
     if( $Env:DEFAULT_GIT_USERNAME -ne $null ) { return $Env:DEFAULT_GIT_USERNAME ; }    
     if( $Env:USERNAME -ne $null ) { return $Env:USERNAME ; }
@@ -110,7 +211,8 @@ function Get-GithubDefaultUsername {
 function Get-GithubDefaultClonePath {
     [CmdletBinding(SupportsShouldProcess)]
     param ()
-    $User = (Get-ItemProperty -Path "$ENV:OrganizationHKCU\github.com" -Name 'default_clone_path' -ErrorAction Ignore).default_clone_path
+    $RegPath = Get-GithubModuleRegistryPath
+    $User = (Get-ItemProperty -Path "$RegPath" -Name 'default_clone_path' -ErrorAction Ignore).default_clone_path
     if( $User -ne $null ) { return $User  }
     if( $Env:GITHUB_DEFAULT_DOWNLOAD_PATH -ne $null ) { return $Env:GITHUB_DEFAULT_CLONE_PATH ; }
     if( $Env:DefaultGithubRepositoryPath -ne $null ) { return $Env:GithubDefaultClonePath ; }
@@ -129,7 +231,8 @@ function Get-AccessToken {          # NOEXPORT
     {
         return $AccessToken
     } 
-     $Token = (Get-ItemProperty -Path "$ENV:OrganizationHKCU\github.com" -Name 'access_token' -ErrorAction Ignore).access_token
+    $RegPath = Get-GithubModuleRegistryPath
+     $Token = (Get-ItemProperty -Path "$RegPath" -Name 'access_token' -ErrorAction Ignore).access_token
      if( $Token -ne $null ) { return $Token  }
      if( $Env:GITHUB_ACCESSTOKEN -ne $null ) { return $Env:GITHUB_ACCESSTOKEN  }
      return $null
@@ -138,7 +241,8 @@ function Get-AccessToken {          # NOEXPORT
 function Get-GithubServer {          # NOEXPORT
     [CmdletBinding(SupportsShouldProcess)]
     param ()
-    $Server = (Get-ItemProperty -Path "$ENV:OrganizationHKCU\github.com" -Name 'hostname' -ErrorAction Ignore).hostname
+    $RegPath = Get-GithubModuleRegistryPath
+    $Server = (Get-ItemProperty -Path "$RegPath" -Name 'hostname' -ErrorAction Ignore).hostname
     if( $Server -ne $null ) { return $Server }
      
     if( $Env:GITHUB_SERVER -ne $null ) { return $Env:GITHUB_SERVER  }
@@ -181,7 +285,7 @@ function Get-GHRepositories{
     }
 }
 
-function Get-PublicRepositories{
+function Get-RepositoriesFromWeb{
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$true,Position=0)]
@@ -228,19 +332,28 @@ function Get-PublicRepositories{
     }
 }
 
-function Get-PrivateRepositories {
+function Get-Repositories {
     [CmdletBinding(SupportsShouldProcess)]
      param(
          [Parameter(Mandatory=$true,ValueFromPipeline=$true, 
             HelpMessage="Github account username") ]
          [string]$User,
-         [Parameter(Mandatory=$false)]
-         [System.Management.Automation.PSCredential]$Credential
+         [Parameter(Mandatory=$false,ValueFromPipeline=$true, 
+            HelpMessage="Visibility") ]
+         [ValidateSet('public','private')]
+         [string]$Visibility='private',
+         [Parameter(Mandatory=$false,ValueFromPipeline=$true) ]
+         [switch]$Remote
      )
  
     try{
         $Response = ''
         $Token= Get-GithubAccessToken
+        $UserCredz = Get-GithubUserCredentials
+        $AppCredz = Get-GithubAppCredentials
+        if($UserCredz.UserName -ne $User){
+            $Remote = $True
+        }
 
         Write-ChannelMessage "Retrieving repositories for $User......"
         Write-verbose "Retrieving repositories for $User......"
@@ -249,42 +362,41 @@ function Get-PrivateRepositories {
             "Content-Type"= "application/x-www-form-urlencoded"
             "Authorization" = $Token
         }
-        #$RequestUrl = "https://api.github.com/search/repositories?type=private&q=user:$User&per_page=100"
-        $RequestUrl = "https://api.github.com/users/$User/repos?type=all&sort=updated&direction=desc&per_page=100" 
-        if($PSVersionTable.PSVersion.Major -le 5){
-            $Response=(invoke-webrequest -Uri $RequestUrl -Headers $headers -Method Get -UseBasicParsing -ErrorAction Ignore)
-            if($Response.StatusCode -ne 200) { throw "REQUEST FAILURE $Response" } 
-        }else {
-            if($PSBoundParameters.ContainsKey('Credential')){
-                $u=$Credential.UserName
-                Write-verbose "Using credential [$u]..."
-                Write-verbose "RequestUrl $RequestUrl"
-                $Response = (Invoke-WebRequest -Uri $RequestUrl -Credential $Credential -Headers $headers -Method Get -ErrorAction Ignore) 
-                if($Response.StatusCode -ne 200) { throw "REQUEST FAILURE $Response" } 
-               
-            }else{
-                
-                Write-verbose " using DEFAULT credential ..."
-                Write-verbose "RequestUrl $RequestUrl"
-                $Response = (Invoke-WebRequest -Uri $RequestUrl -Headers $headers -Method Get -ErrorAction Ignore) 
-                if($Response.StatusCode -ne 200) { throw "REQUEST FAILURE $Response" } 
-                
-            }
-        }
-        $Content = $Response.Content
-        $ContentLen=$Content.Length
 
-        if($PSBoundParameters.ContainsKey('Debug')){
-            Write-Host "=============================================" -f DarkRed
-            $Response
-            Write-Host "$Content" -f DarkYellow
-            Write-Host "=============================================" -f DarkRed
+        $RequestUrl = "https://api.github.com/user/repos?sort=updated&direction=desc&per_page=100&visibility=$Visibility" 
+        if($Remote){
+            $RequestUrl = "https://api.github.com/users/$User/repos?type=all&sort=updated&direction=desc&per_page=100"     
         }
         
-        Write-verbose "ContentLen: $ContentLen"
-        $ParsedBuffer=$Content | ConvertFrom-Json
+        Write-Verbose "IRequestUrl $RequestUrl"
+
+        $AccessToken = (Get-GithubAccessToken)
+        $HeadersData = @{
+            'Accept' =  'application/vnd.github.v3+json'
+            'User-Agent' = Get-GithubModuleUserAgent
+        }
+        $HeadersData['Authorization'] = "token $AccessToken"
+
+        $BodyData = @{
+            grant_type  = 'password'
+            username    = $UserCredz.UserName
+            password    = $UserCredz.GetNetworkCredential().Password    
+        }
+        $Params = @{
+            Uri             = $RequestUrl
+            Body            = $BodyData
+            UserAgent       = Get-GithubModuleUserAgent
+            Headers         = $HeadersData
+            Method          = 'GET'
+            UseBasicParsing = $true
+        }     
+
+
+        Write-Verbose "Invoke-WebRequest $Params"
+        $Response = (Invoke-WebRequest @Params).Content
+        $ParsedBuffer = $Response | ConvertFrom-Json
+
         if($ParsedBuffer -eq $Null){$Null }
-        Write-verbose "ParsedBuffer $ParsedBuffer"
         $RepoCount=$ParsedBuffer.Count
         $ret=$ParsedBuffer | select name, private, clone_url, ssh_url, language, updated_at, description
         Write-verbose "ret $ret"
@@ -296,6 +408,26 @@ function Get-PrivateRepositories {
     return $Null
    
 }
+function Get-PublicRepositories {
+    [CmdletBinding(SupportsShouldProcess)]
+     param(
+         [Parameter(Mandatory=$true,ValueFromPipeline=$true, 
+            HelpMessage="Github account username") ]
+         [string]$User,
+         [switch]$Remote
+     )
+     return Get-Repositories -User $User -Visibility 'public' -Remote:$Remote
+ }
+
+function Get-PrivateRepositories {
+    [CmdletBinding(SupportsShouldProcess)]
+     param(
+         [Parameter(Mandatory=$true,ValueFromPipeline=$true, 
+            HelpMessage="Github account username") ]
+         [string]$User
+     )
+     return Get-Repositories -User $User
+ }
 
 function Split-RepositoryUrl {
     [CmdletBinding(SupportsShouldProcess)]
@@ -579,7 +711,7 @@ function Sync-UserRepositories
             throw "Cannot connect to $HostName on port $Port"
         }
 
-        $reposdata=Get-PrivateRepositories $User 
+        $reposdata=Get-PublicRepositories -User $User -Remote
         if($reposdata -eq $null){
             Write-Host "[ERROR] " -n -f DarkRed
             Write-Host "Failed to get repo data for user $User MAY BE INVALID USER" -f DarkYellow
@@ -839,7 +971,7 @@ function New-SubModule {
         [Alias('u')] [string]$Url
     ) 
 
-    $Url = Resolve-RepositoryUrl -Repository $Url -User 'codecastor'
+    $Url = Resolve-RepositoryUrl -Repository $Url -User 'arsscriptum'
    
     
     $stdout_tmp = (New-TemporaryFile).Fullname
@@ -1061,8 +1193,10 @@ To push an existing local repository to Github run these commands:
 function Remove-Repository {
      param(
         [Parameter(Mandatory=$true,ValueFromPipeline=$true, 
-            HelpMessage="The repository name") ]
+            HelpMessage="The repository name, including the username like arsscriptum/ProcessTest") ]
         [string]$Name,
+        [Parameter(Mandatory=$false,ValueFromPipeline=$true, 
+            HelpMessage="no question") ]
         [switch]$Force       
      )
  
@@ -1095,11 +1229,11 @@ function Remove-Repository {
             'name' = $Name
         }
 
-        $RequestUrl = "https://api.github.com/repos/codecastor/$Name"
+        $RequestUrl = "https://api.github.com/repos/$Name"
         $body = $hashBody | ConvertTo-Json
         #define parameter hashtable for Invoke-RestMethod
         $paramHash = @{
-            Uri =  "https://api.github.com/repos/codecastor/$Name"
+            Uri =  "https://api.github.com/repos/$Name"
             Method = "DELETE"
             body = $body 
             ContentType = "application/json"
@@ -1150,3 +1284,36 @@ function Set-RepositoryVisibility {
     }
 }
   
+# SIG # Begin signature block
+# MIIFxAYJKoZIhvcNAQcCoIIFtTCCBbECAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
+# gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUNLK7LsMWeWphOFoAofNmQG/d
+# 6lCgggNNMIIDSTCCAjWgAwIBAgIQmkSKRKW8Cb1IhBWj4NDm0TAJBgUrDgMCHQUA
+# MCwxKjAoBgNVBAMTIVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdDAe
+# Fw0yMjAyMDkyMzI4NDRaFw0zOTEyMzEyMzU5NTlaMCUxIzAhBgNVBAMTGkFyc1Nj
+# cmlwdHVtIFBvd2VyU2hlbGwgQ1NDMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB
+# CgKCAQEA60ec8x1ehhllMQ4t+AX05JLoCa90P7LIqhn6Zcqr+kvLSYYp3sOJ3oVy
+# hv0wUFZUIAJIahv5lS1aSY39CCNN+w47aKGI9uLTDmw22JmsanE9w4vrqKLwqp2K
+# +jPn2tj5OFVilNbikqpbH5bbUINnKCDRPnBld1D+xoQs/iGKod3xhYuIdYze2Edr
+# 5WWTKvTIEqcEobsuT/VlfglPxJW4MbHXRn16jS+KN3EFNHgKp4e1Px0bhVQvIb9V
+# 3ODwC2drbaJ+f5PXkD1lX28VCQDhoAOjr02HUuipVedhjubfCmM33+LRoD7u6aEl
+# KUUnbOnC3gVVIGcCXWsrgyvyjqM2WQIDAQABo3YwdDATBgNVHSUEDDAKBggrBgEF
+# BQcDAzBdBgNVHQEEVjBUgBD8gBzCH4SdVIksYQ0DovzKoS4wLDEqMCgGA1UEAxMh
+# UG93ZXJTaGVsbCBMb2NhbCBDZXJ0aWZpY2F0ZSBSb290ghABvvi0sAAYvk29NHWg
+# Q1DUMAkGBSsOAwIdBQADggEBAI8+KceC8Pk+lL3s/ZY1v1ZO6jj9cKMYlMJqT0yT
+# 3WEXZdb7MJ5gkDrWw1FoTg0pqz7m8l6RSWL74sFDeAUaOQEi/axV13vJ12sQm6Me
+# 3QZHiiPzr/pSQ98qcDp9jR8iZorHZ5163TZue1cW8ZawZRhhtHJfD0Sy64kcmNN/
+# 56TCroA75XdrSGjjg+gGevg0LoZg2jpYYhLipOFpWzAJqk/zt0K9xHRuoBUpvCze
+# yrR9MljczZV0NWl3oVDu+pNQx1ALBt9h8YpikYHYrl8R5xt3rh9BuonabUZsTaw+
+# xzzT9U9JMxNv05QeJHCgdCN3lobObv0IA6e/xTHkdlXTsdgxggHhMIIB3QIBATBA
+# MCwxKjAoBgNVBAMTIVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdAIQ
+# mkSKRKW8Cb1IhBWj4NDm0TAJBgUrDgMCGgUAoHgwGAYKKwYBBAGCNwIBDDEKMAig
+# AoAAoQKAADAZBgkqhkiG9w0BCQMxDAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgEL
+# MQ4wDAYKKwYBBAGCNwIBFTAjBgkqhkiG9w0BCQQxFgQUsuyr2wHYDAVID24liutG
+# B7jokqwwDQYJKoZIhvcNAQEBBQAEggEAZxyCnUW17cCylqSjSmQrhYqiYklmVMrL
+# jwxdyz2u5M51Sxuudyla0vUQaQ9z/wzkr+jSp3yryxSIqwyA5Ksn7jFO2lSgLpbS
+# kq2OzlXyi2jjtjDikpL+atKh/4WlCvl26GS4kjqsrOkrlD8ZfXlYyzMtpl4uAQnL
+# ECxzxhY7Kn3G5ECjroDHMmK4WoxGK/Hb9YQxrA+4kxng9kbeWkCsCGg+Ir9fQldt
+# ZB+OLHaNT4XpSDrRt040nkQD1/8Xzqa6TMr/w8+Z4b8GSzPQ4H15p4Sb4nlhNo1N
+# mnK8X4UFwzzzOE9gneEXELwRTdGTubIZdMXu2lpYQWpwvsrA8rWp0g==
+# SIG # End signature block
