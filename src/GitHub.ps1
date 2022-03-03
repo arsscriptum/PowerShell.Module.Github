@@ -789,6 +789,40 @@ function Sync-UserRepositories
 }
 
 
+function Push-ChangesAuthenticated{
+    [CmdletBinding(SupportsShouldProcess)]
+    Param
+    (
+        [Parameter(Mandatory=$false)]
+        [string]$DeployPath,
+        [Alias('m','msg','message','d')]
+        [Parameter(Mandatory=$false)]
+        [string]$Description = 'automatic-commit'
+    )
+    
+    $GitExe = Get-GitExecutablePath
+    If($PSBoundParameters.ContainsKey('DeployPath') -eq $False ){
+        $CurrentPath = (Get-Location).Path
+    }else{
+        pushd $DeployPath
+    }
+
+    Write-ChannelMessage  " adding files in the repository."
+    Write-ChannelMessage  " From $DeployPath" 
+    &"$GitExe" add *
+
+    Get-Status
+    Write-ChannelMessage " commiting files in the repository. please wait......"
+    Write-ChannelMessage "Description $Description"
+    &"$GitExe" commit -a -m "$Description"
+
+    Write-ChannelMessage " pushing changes..."
+    &"$GitExe" push (Get-GithubUrl -Authenticated)
+
+    popd
+ }
+
+
 function Push-Changes {
     [CmdletBinding(SupportsShouldProcess)]
     Param

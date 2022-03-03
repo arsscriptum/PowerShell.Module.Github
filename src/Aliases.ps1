@@ -19,7 +19,8 @@ New-Alias -Name gdiff -Value Show-Diff -Force
 New-Alias -Name rev -Value Get-GitRevision -Force
 
 # push
-New-Alias -Name push -value Push-Changes -Force
+New-Alias -Name gpush -value Push-Changes -Force
+New-Alias -Name gpush-auth -value Push-ChangesAuthenticated -Force
 
 New-Alias -Name clonemine -value Initialize-LocalUserRepository -Force
 # clone user
