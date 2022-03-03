@@ -249,7 +249,7 @@ function Get-GithubServer {          # NOEXPORT
     return $null
 }
 
-function Get-GitExecutablePath {          # NOEXPORT
+function Get-GitExecutablePath{
     [CmdletBinding(SupportsShouldProcess)]
     param ()
     $GitPath = (get-command "git.exe" -ErrorAction Ignore).Source
@@ -817,7 +817,7 @@ function Push-Changes {
     &"$GitExe" commit -a -m "$Description"
 
     Write-ChannelMessage " pushing changes..."
-    &"$GitExe" push
+    &"$GitExe" push (Get-GithubUrl -Authenticated)
 
     popd
  }
