@@ -817,7 +817,7 @@ function Push-Changes {
     &"$GitExe" commit -a -m "$Description"
 
     Write-ChannelMessage " pushing changes..."
-    &"$GitExe" push (Get-GithubUrl -Authenticated)
+    &"$GitExe" push 
 
     popd
  }
