@@ -852,13 +852,15 @@ function Push-Changes {
             &"$GitExe" 'add' '*'
         }  
        
+
         if($Quiet){
             &"$GitExe" 'commit' '-a' '-m' "$Description" | out-null    
         }else{
             Write-ChannelMessage " commiting files in the repository. please wait......"
             Write-ChannelMessage "Description $Description"
 
-            &"$GitExe" 'commit' '-a' '-m' "$CommitMessage"
+            $GitArgs = @('commit', '-a', '-m', "$Description" )
+            Start-Process =FilePath "$GitExe" -ArgumentList $GittArgs
         }  
 
         $UrlAuth = (Get-GithubUrl -Authenticated)
@@ -868,7 +870,9 @@ function Push-Changes {
             }else{
                 
                 Write-ChannelMessage " pushing changes to $UrlAuth..."
-                &"$GitExe" 'push' "$UrlAuth"
+                
+                $GitArgs = @('push' ,"$UrlAuth")
+                Start-Process =FilePath "$GitExe" -ArgumentList $GittArgs 
             }    
         }else{
             Write-ChannelMessage " pushing changes..."
