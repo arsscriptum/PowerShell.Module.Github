@@ -842,38 +842,38 @@ function Push-Changes {
     }
 
     if($Quiet){
-        &"$GitExe" add * | out-null    
+        &"$GitExe" 'add' '*' | out-null    
     }else{
         Write-ChannelMessage  " adding files in the repository."
         Write-ChannelMessage  " From $DeployPath" 
-        &"$GitExe" add *
+        &"$GitExe" 'add' '*'
     }  
    
     if($Quiet){
-        &"$GitExe" commit -a -m "$Description" | out-null    
+        &"$GitExe" 'commit' '-a' '-m' "$Description" | out-null    
     }else{
         Write-ChannelMessage " commiting files in the repository. please wait......"
         Write-ChannelMessage "Description $Description"
 
-        &"$GitExe" commit -a -m "$CommitMessage"
+        &"$GitExe" 'commit' '-a' '-m' "$CommitMessage"
     }  
 
-    
+    $UrlAuth = (Get-GithubUrl -Authenticated)
     if($Authenticated){
         if($Quiet){
-            &"$GitExe" push  (Get-GithubUrl -Authenticated)| out-null    
+            &"$GitExe" 'push'  "$UrlAuth"| out-null    
         }else{
-            $UrlAuth = (Get-GithubUrl -Authenticated)
+            
             Write-ChannelMessage " pushing changes to $UrlAuth..."
-            &"$GitExe" push (Get-GithubUrl -Authenticated)
+            &"$GitExe" 'push' "$UrlAuth"
         }    
     }else{
         Write-ChannelMessage " pushing changes..."
         if($Quiet){
-            &"$GitExe" push  | out-null    
+            &"$GitExe" 'push' | out-null    
         }else{
             Write-ChannelMessage " pushing changes..."
-            &"$GitExe" push 
+            &"$GitExe" 'push'
         }  
     }  
 
