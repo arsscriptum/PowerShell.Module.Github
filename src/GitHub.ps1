@@ -637,6 +637,27 @@ function Initialize-RepositoryAdvanced {
     return $true
  }
 
+function Reset-GitRepo{
+    [CmdletBinding(SupportsShouldProcess)]
+    Param
+    (
+        [Alias('q')]
+        [Parameter(Mandatory=$false)]
+        [switch]$Quiet
+    )
+
+    $GitExe = Get-GitExecutablePath
+    $tmpFile = New-RandomFilename
+    if($Quiet){
+        &"$GitExe" 'reset' '--hard' | out-null    
+    }else{
+        &"$GitExe" 'reset' '--hard'
+    }
+    
+}
+
+
+
 
 function Save-Changes{
     [CmdletBinding(SupportsShouldProcess)]
@@ -644,7 +665,10 @@ function Save-Changes{
     (
         [Alias('m','msg','message','d')]
         [Parameter(Mandatory=$false)]
-        [string]$Description = 'automatic-commit'
+        [string]$Description = 'automatic-commit',
+        [Alias('q')]
+        [Parameter(Mandatory=$false)]
+        [switch]$Quiet        
     )
   
 
@@ -655,7 +679,12 @@ function Save-Changes{
     $CommitMessage='"'+$Description+'"'
     $GitExe = Get-GitExecutablePath
 
-    &"$GitExe" commit -a -m "$CommitMessage"
+    
+    if($Quiet){
+        &"$GitExe" commit -a -m "$CommitMessage" | out-null    
+    }else{
+        &"$GitExe" commit -a -m "$CommitMessage"
+    }    
 }
 
 
@@ -789,39 +818,6 @@ function Sync-UserRepositories
 }
 
 
-function Push-ChangesAuthenticated{
-    [CmdletBinding(SupportsShouldProcess)]
-    Param
-    (
-        [Parameter(Mandatory=$false)]
-        [string]$DeployPath,
-        [Alias('m','msg','message','d')]
-        [Parameter(Mandatory=$false)]
-        [string]$Description = 'automatic-commit'
-    )
-    
-    $GitExe = Get-GitExecutablePath
-    If($PSBoundParameters.ContainsKey('DeployPath') -eq $False ){
-        $CurrentPath = (Get-Location).Path
-    }else{
-        pushd $DeployPath
-    }
-
-    Write-ChannelMessage  " adding files in the repository."
-    Write-ChannelMessage  " From $DeployPath" 
-    &"$GitExe" add *
-
-    Get-Status
-    Write-ChannelMessage " commiting files in the repository. please wait......"
-    Write-ChannelMessage "Description $Description"
-    &"$GitExe" commit -a -m "$Description"
-
-    Write-ChannelMessage " pushing changes..."
-    &"$GitExe" push (Get-GithubUrl -Authenticated)
-
-    popd
- }
-
 
 function Push-Changes {
     [CmdletBinding(SupportsShouldProcess)]
@@ -829,9 +825,13 @@ function Push-Changes {
     (
         [Parameter(Mandatory=$false)]
         [string]$DeployPath,
-        [Alias('m','msg','message','d')]
         [Parameter(Mandatory=$false)]
-        [string]$Description = 'automatic-commit'
+        [string]$Description = 'automatic-commit',
+        [Parameter(Mandatory=$false)]
+        [Alias('q')]
+        [switch]$Quiet,
+        [Parameter(Mandatory=$false)]
+        [switch]$Authenticated 
     )
     
     $GitExe = Get-GitExecutablePath
@@ -841,17 +841,43 @@ function Push-Changes {
         pushd $DeployPath
     }
 
-    Write-ChannelMessage  " adding files in the repository."
-    Write-ChannelMessage  " From $DeployPath" 
-    &"$GitExe" add *
+    if($Quiet){
+        &"$GitExe" add * | out-null    
+    }else{
+        Write-ChannelMessage  " adding files in the repository."
+        Write-ChannelMessage  " From $DeployPath" 
+        &"$GitExe" add *
+    }  
+   
+    if($Quiet){
+        &"$GitExe" commit -a -m "$Description" | out-null    
+    }else{
+        Write-ChannelMessage " commiting files in the repository. please wait......"
+        Write-ChannelMessage "Description $Description"
 
-    Get-Status
-    Write-ChannelMessage " commiting files in the repository. please wait......"
-    Write-ChannelMessage "Description $Description"
-    &"$GitExe" commit -a -m "$Description"
+        &"$GitExe" commit -a -m "$CommitMessage"
+    }  
 
-    Write-ChannelMessage " pushing changes..."
-    &"$GitExe" push 
+    
+    if($Authenticated){
+        if($Quiet){
+            &"$GitExe" push  (Get-GithubUrl -Authenticated)| out-null    
+        }else{
+            $UrlAuth = (Get-GithubUrl -Authenticated)
+            Write-ChannelMessage " pushing changes to $UrlAuth..."
+            &"$GitExe" push (Get-GithubUrl -Authenticated)
+        }    
+    }else{
+        Write-ChannelMessage " pushing changes..."
+        if($Quiet){
+            &"$GitExe" push  | out-null    
+        }else{
+            Write-ChannelMessage " pushing changes..."
+            &"$GitExe" push 
+        }  
+    }  
+
+
 
     popd
  }
