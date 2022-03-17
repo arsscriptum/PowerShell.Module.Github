@@ -285,6 +285,85 @@ function Get-GHRepositories{
     }
 }
 
+
+function Invoke-Git {
+    [CmdletBinding(SupportsShouldProcess)]
+    Param
+    (
+        [Parameter(Mandatory=$true, position=0)]
+        [string[]]$GitArguments,
+        [Parameter(Mandatory = $False)]
+        [string]$WorkingDirectory,
+        [Parameter(Mandatory = $False)]
+        [switch]$RedirectOutput       
+    )
+
+    $GitExe = Get-GitExecutablePath
+
+    if(($WorkingDirectory -eq $null) -Or ($WorkingDirectory.Length -eq 0)){
+        $WorkingDirectory=(Get-Location).Path
+    }
+
+    [string]$FNameOut = $Null
+    [string]$FNameErr = $Null
+
+    $startProcessParams = @{
+        FilePath                = "$GitExe"
+        WorkingDirectory        = "$WorkingDirectory"
+        ArgumentList            = $GitArguments
+        NoNewWindow             = $true
+        Wait                    = $true
+        PassThru                = $true        
+    }   
+
+    if($RedirectOutput){
+        $Guid=$(( New-Guid ).Guid)  
+        $FNameOut=$env:Temp + "\InvokeProcessOut"+$Guid.substring(0,4)+".log"
+        $FNameErr=$env:Temp + "\InvokeProcessErr"+$Guid.substring(0,4)+".log"
+
+        $startProcessParams['RedirectStandardOutput']  = $FNameOut
+        $startProcessParams['RedirectStandardError']   = $FNameErr
+    }
+
+
+    $cmdName=""
+    $cmdId=0
+    $cmdExitCode=0
+    $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+
+    $cmd = Start-Process @startProcessParams | Out-null
+    $cmdExitCode = $cmd.ExitCode
+    $cmdId = $cmd.Id 
+    $cmdName=$cmd.Name 
+
+    $stdOut = ''
+    $stdErr = ''
+    if($RedirectOutput){
+        $stdOut = Get-Content -Path $FNameOut -Raw
+        $stdErr = Get-Content -Path $FNameErr -Raw
+        if ([string]::IsNullOrEmpty($stdOut) -eq $false) {
+            $stdOut = $stdOut.Trim()
+        }
+        if ([string]::IsNullOrEmpty($stdErr) -eq $false) {
+            $stdErr = $stdErr.Trim()
+        }        
+    }
+
+    $res = [PSCustomObject]@{
+        Name            = $cmdName
+        Id              = $cmdId
+        FilePath        = "$GitExe"
+        WorkingDirectory= "$WorkingDirectory"
+        ArgumentList    = $GitArguments        
+        ExitCode        = $cmdExitCode
+        ElapsedSeconds  = $stopwatch.Elapsed.Seconds
+        ElapsedMs       = $stopwatch.Elapsed.Milliseconds
+        Output          = $stdOut
+        Error           = $stdErr        
+    }
+    return $res                    
+}
+
 function Get-RepositoriesFromWeb{
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -837,52 +916,25 @@ function Push-Changes {
         [string]$datestr=(get-date).GetDateTimeFormats()[23]
         if($Description -eq ''){$Description = "'$datestr : automatic-commit'"; }
 
-        $GitExe = Get-GitExecutablePath
         If($PSBoundParameters.ContainsKey('DeployPath') -eq $False ){
             $DeployPath = (Get-Location).Path
         }else{
             pushd $DeployPath
         }
 
-        if($Quiet){
-            &"$GitExe" 'add' '*' | out-null    
-        }else{
-            Write-ChannelMessage  " adding files in the repository."
-            Write-ChannelMessage  " From $DeployPath" 
-            &"$GitExe" 'add' '*'
-        }  
-       
+        $GitArgs=@("add", "*")
+        Write-ChannelMessage  "git add"
+        $Null = Invoke-Git -GitArgument $GitArgs -RedirectOutput:$Quiet
 
-        if($Quiet){
-            &"$GitExe" 'commit' '-a' '-m' "$Description" | out-null    
-        }else{
-            Write-ChannelMessage " commiting files in the repository. please wait......"
-            Write-ChannelMessage "Description $Description"
-
-            $GitArgs = @('commit', '-a', '-m', "$Description" )
-            Start-Process =FilePath "$GitExe" -ArgumentList $GittArgs
-        }  
-
-        $UrlAuth = (Get-GithubUrl -Authenticated)
-        if($Authenticated){
-            if($Quiet){
-                &"$GitExe" 'push'  "$UrlAuth"| out-null    
-            }else{
-                
-                Write-ChannelMessage " pushing changes to $UrlAuth..."
-                
-                $GitArgs = @('push' ,"$UrlAuth")
-                Start-Process =FilePath "$GitExe" -ArgumentList $GittArgs 
-            }    
-        }else{
-            Write-ChannelMessage " pushing changes..."
-            if($Quiet){
-                &"$GitExe" 'push' | out-null    
-            }else{
-                Write-ChannelMessage " pushing changes..."
-                &"$GitExe" 'push'
-            }  
-        }
+        $GitArgs=@("commit", "-a", "-m", "auto")
+        Write-ChannelMessage "git commit"
+        $Null = Invoke-Git -GitArgument $GitArgs -RedirectOutput:$Quiet
+      
+        $GitArgs=@('push')
+        if($Authenticated){ $GitArgs += (Get-GithubUrl -Authenticated) }
+        Write-ChannelMessage "git push"
+        $Null = Invoke-Git -GitArgument $GitArgs -RedirectOutput:$Quiet
+        
         popd
     }catch{
        Show-ExceptionDetails $_ -ShowStack

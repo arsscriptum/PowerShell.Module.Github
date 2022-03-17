@@ -146,7 +146,7 @@ function Get-GithubUrl{
 		
 		if($Authenticated){
 			$Credz = Get-GithubAppCredentials
-			if($Credz.UserName -eq ''){
+			if(($Credz.UserName -eq $Null)-Or($Credz.UserName -eq '')){
 				throw "GithubAppCredentials not registered"
 				return ''
 			}
@@ -157,7 +157,7 @@ function Get-GithubUrl{
 		return $StrAbsoluteUri
 	}
 	catch{
-		Write-Host "$_" -f DarkRed
+		Show-ExceptionDetails $_ -ShowStack
 	}
 }
 
