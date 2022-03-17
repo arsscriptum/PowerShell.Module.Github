@@ -833,56 +833,60 @@ function Push-Changes {
         [Parameter(Mandatory=$false)]
         [switch]$Authenticated 
     )
-    [string]$datestr=(get-date).GetDateTimeFormats()[23]
-    if($Description -eq ''){$Description = "$datestr : automatic-commit"; }
+    try{
+        [string]$datestr=(get-date).GetDateTimeFormats()[23]
+        if($Description -eq ''){$Description = "'$datestr : automatic-commit'"; }
 
-    $GitExe = Get-GitExecutablePath
-    If($PSBoundParameters.ContainsKey('DeployPath') -eq $False ){
-        $CurrentPath = (Get-Location).Path
-    }else{
-        pushd $DeployPath
-    }
-
-    if($Quiet){
-        &"$GitExe" 'add' '*' | out-null    
-    }else{
-        Write-ChannelMessage  " adding files in the repository."
-        Write-ChannelMessage  " From $DeployPath" 
-        &"$GitExe" 'add' '*'
-    }  
-   
-    if($Quiet){
-        &"$GitExe" 'commit' '-a' '-m' "$Description" | out-null    
-    }else{
-        Write-ChannelMessage " commiting files in the repository. please wait......"
-        Write-ChannelMessage "Description $Description"
-
-        &"$GitExe" 'commit' '-a' '-m' "$CommitMessage"
-    }  
-
-    $UrlAuth = (Get-GithubUrl -Authenticated)
-    if($Authenticated){
-        if($Quiet){
-            &"$GitExe" 'push'  "$UrlAuth"| out-null    
+        $GitExe = Get-GitExecutablePath
+        If($PSBoundParameters.ContainsKey('DeployPath') -eq $False ){
+            $DeployPath = (Get-Location).Path
         }else{
-            
-            Write-ChannelMessage " pushing changes to $UrlAuth..."
-            &"$GitExe" 'push' "$UrlAuth"
-        }    
-    }else{
-        Write-ChannelMessage " pushing changes..."
+            pushd $DeployPath
+        }
+
         if($Quiet){
-            &"$GitExe" 'push' | out-null    
+            &"$GitExe" 'add' '*' | out-null    
+        }else{
+            Write-ChannelMessage  " adding files in the repository."
+            Write-ChannelMessage  " From $DeployPath" 
+            &"$GitExe" 'add' '*'
+        }  
+       
+        if($Quiet){
+            &"$GitExe" 'commit' '-a' '-m' "$Description" | out-null    
+        }else{
+            Write-ChannelMessage " commiting files in the repository. please wait......"
+            Write-ChannelMessage "Description $Description"
+
+            &"$GitExe" 'commit' '-a' '-m' "$CommitMessage"
+        }  
+
+        $UrlAuth = (Get-GithubUrl -Authenticated)
+        if($Authenticated){
+            if($Quiet){
+                &"$GitExe" 'push'  "$UrlAuth"| out-null    
+            }else{
+                
+                Write-ChannelMessage " pushing changes to $UrlAuth..."
+                &"$GitExe" 'push' "$UrlAuth"
+            }    
         }else{
             Write-ChannelMessage " pushing changes..."
-            &"$GitExe" 'push'
-        }  
-    }  
+            if($Quiet){
+                &"$GitExe" 'push' | out-null    
+            }else{
+                Write-ChannelMessage " pushing changes..."
+                &"$GitExe" 'push'
+            }  
+        }
+        popd
+    }catch{
+       Show-ExceptionDetails $_ -ShowStack
+    }
+ } 
 
 
-
-    popd
- }
+ 
 
  function Get-Status {
     [CmdletBinding(SupportsShouldProcess)]
