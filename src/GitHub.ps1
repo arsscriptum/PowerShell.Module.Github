@@ -826,14 +826,16 @@ function Push-Changes {
         [Parameter(Mandatory=$false)]
         [string]$DeployPath,
         [Parameter(Mandatory=$false)]
-        [string]$Description = 'automatic-commit',
+        [string]$Description = '',
         [Parameter(Mandatory=$false)]
         [Alias('q')]
         [switch]$Quiet,
         [Parameter(Mandatory=$false)]
         [switch]$Authenticated 
     )
-    
+    [string]$datestr=(get-date).GetDateTimeFormats()[23]
+    if($Description -eq ''){$Description = "$datestr : automatic-commit"; }
+
     $GitExe = Get-GitExecutablePath
     If($PSBoundParameters.ContainsKey('DeployPath') -eq $False ){
         $CurrentPath = (Get-Location).Path
