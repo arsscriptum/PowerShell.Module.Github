@@ -129,37 +129,3 @@ function Get-HttpWebResponseContent
 
 
 
-function Get-GithubUrl{
-    [CmdletBinding(SupportsShouldProcess)]
-    param(
-        [Parameter(Mandatory=$false, ValueFromPipeline=$true, HelpMessage="Overwrite if present", Position=0)]
-        [switch]$Authenticated
-    )
-	try{
-		[string]$UrlString = git config --get remote.origin.url
-		[Uri]$GitUrl = $UrlString
-		[string]$StrAbsoluteUri = $GitUrl.AbsoluteUri
-		if($StrAbsoluteUri -eq ''){
-			throw "NOT A GIT REPOSITORY"
-			return ''
-		}
-		
-		if($Authenticated){
-			$Credz = Get-GithubAppCredentials
-			if(($Credz.UserName -eq $Null)-Or($Credz.UserName -eq '')){
-				throw "GithubAppCredentials not registered"
-				return ''
-			}
-			$StrRepl = ('https://{0}:{1}@' -f $Credz.UserName, $Credz.GetNetworkCredential().Password)
-			$StrAbsoluteUri = $StrAbsoluteUri.Replace('https://',$StrRepl)
-		}
-		
-		return $StrAbsoluteUri
-	}
-	catch{
-		Show-ExceptionDetails $_ -ShowStack
-	}
-}
-
-
-

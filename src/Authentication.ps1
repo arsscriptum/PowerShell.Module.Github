@@ -1,4 +1,10 @@
-
+<#
+  ╓──────────────────────────────────────────────────────────────────────────────────────
+  ║   PowerShell.Module.Github
+  ║   Authentication.ps1
+  ║   GET AUTHENTICATION DATA
+  ╙──────────────────────────────────────────────────────────────────────────────────────
+ #>
 
 
 
@@ -26,6 +32,33 @@ function Get-AuthorizationHeader { # NOEXPORT
     }# End process
 }# End Get-AuthorizationHeader
 
+
+function Set-GithubUserCredentials { 
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, HelpMessage="Git Username")]
+        [String]$User,
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, HelpMessage="Git Username")]
+        [String]$Password 
+    )
+    
+    if( $ExecutionContext -eq $null ) { throw "not in module"; return "" ; }
+    $ModuleName = ($ExecutionContext.SessionState).Module
+    Write-Host "✅ Register-AppCredentials -Id $ModuleName -Username $User -Password $Password"
+    Register-AppCredentials -Id $ModuleName -Username $User -Password $Password
+    
+}
+function Set-GithubAppCredentials { 
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+    
+    if( $ExecutionContext -eq $null ) { throw "not in module"; return "" ; }
+    $ModuleName = ($ExecutionContext.SessionState).Module
+    Write-Host "✅ Register-AppCredentials -Id $ModuleName -Username $(Get-GithubDefaultUsername) -Password $(Get-GithubAccessToken)"
+    Register-AppCredentials -Id $ModuleName -Username $(Get-GithubDefaultUsername) -Password $(Get-GithubAccessToken)
+    
+}
+
 function Get-GithubUserCredentials { 
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -43,7 +76,11 @@ function Get-GithubAppCredentials {
         [Parameter(Mandatory=$false, ValueFromPipeline=$true, HelpMessage="Overwrite if present")]
         [String]$Id
     )
-    $Credz =  Get-AppCredentials "PowerShell-Github-arsscriptum"
+
+    if( $ExecutionContext -eq $null ) { throw "not in module"; return "" ; }
+    $ModuleName = ($ExecutionContext.SessionState).Module
+
+    $Credz =  Get-AppCredentials $ModuleName
     
     return $Credz
 }
