@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-Status
+# Get-RepositoriesFromWeb
 
 ## SYNOPSIS
 {{ Fill in the Synopsis }}
@@ -13,7 +13,8 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Get-Status [-Raw] [-WhatIf] [-Confirm] [<CommonParameters>]
+Get-RepositoriesFromWeb [-User] <String> [[-Credential] <PSCredential>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -45,16 +46,31 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Raw
-{{ Fill Raw Description }}
+### -Credential
+{{ Fill Credential Description }}
 
 ```yaml
-Type: SwitchParameter
+Type: PSCredential
 Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: Named
+Position: 1
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -User
+{{ Fill User Description }}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 0
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

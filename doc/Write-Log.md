@@ -1,11 +1,11 @@
 ---
 external help file: PowerShell.Module.Github-help.xml
 Module Name: PowerShell.Module.Github
-online version:
+online version: http://go.microsoft.com/fwlink/?LinkID=113426
 schema: 2.0.0
 ---
 
-# Get-Status
+# Write-Log
 
 ## SYNOPSIS
 {{ Fill in the Synopsis }}
@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Get-Status [-Raw] [-WhatIf] [-Confirm] [<CommonParameters>]
+Write-Log [-InputObject] <Object[]> [-Time] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -30,44 +30,28 @@ PS C:\> {{ Add example code here }}
 
 ## PARAMETERS
 
-### -Confirm
-Prompts you for confirmation before running the cmdlet.
+### -InputObject
+{{ Fill InputObject Description }}
 
 ```yaml
-Type: SwitchParameter
+Type: Object[]
 Parameter Sets: (All)
-Aliases: cf
+Aliases:
 
-Required: False
-Position: Named
+Required: True
+Position: 0
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Raw
-{{ Fill Raw Description }}
+### -Time
+{{ Fill Time Description }}
 
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
 Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: wi
 
 Required: False
 Position: Named

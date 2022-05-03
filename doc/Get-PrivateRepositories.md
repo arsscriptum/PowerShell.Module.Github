@@ -1,6 +1,6 @@
 ---
-external help file: CodeCastor.PowerShell.GitHub-help.xml
-Module Name: CodeCastor.PowerShell.GitHub
+external help file: PowerShell.Module.Github-help.xml
+Module Name: PowerShell.Module.Github
 online version:
 schema: 2.0.0
 ---
@@ -13,8 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Get-PrivateRepositories [-User] <String> [[-Credential] <PSCredential>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+Get-PrivateRepositories [-User] <String> [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -41,21 +40,6 @@ Aliases: cf
 
 Required: False
 Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Credential
-{{ Fill Credential Description }}
-
-```yaml
-Type: PSCredential
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

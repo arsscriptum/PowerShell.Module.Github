@@ -1,6 +1,6 @@
 ---
-external help file: CodeCastor.PowerShell.GitHub-help.xml
-Module Name: CodeCastor.PowerShell.GitHub
+external help file: PowerShell.Module.Github-help.xml
+Module Name: PowerShell.Module.Github
 online version:
 schema: 2.0.0
 ---
@@ -13,8 +13,8 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Sync-UserRepositories [-User] <String> [-Path] <String> [[-HostName] <String>] [-Force] [[-Exception] <String>]
- [-WhatIf] [-Confirm] [<CommonParameters>]
+Sync-UserRepositories [-User] <String> [[-Path] <String>] [[-HostName] <String>] [-Force]
+ [[-Exceptions] <Array>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -46,11 +46,11 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Exception
+### -Exceptions
 Host name in case user has multiple git accounts setup
 
 ```yaml
-Type: String
+Type: Array
 Parameter Sets: (All)
 Aliases:
 
@@ -99,7 +99,7 @@ Type: String
 Parameter Sets: (All)
 Aliases:
 
-Required: True
+Required: False
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
@@ -145,6 +145,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ### System.String
 
 ### System.Management.Automation.SwitchParameter
+
+### System.Array
 
 ## OUTPUTS
 

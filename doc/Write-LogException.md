@@ -1,11 +1,11 @@
 ---
 external help file: PowerShell.Module.Github-help.xml
 Module Name: PowerShell.Module.Github
-online version:
+online version: http://go.microsoft.com/fwlink/?LinkID=113426
 schema: 2.0.0
 ---
 
-# Get-Status
+# Write-LogException
 
 ## SYNOPSIS
 {{ Fill in the Synopsis }}
@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Get-Status [-Raw] [-WhatIf] [-Confirm] [<CommonParameters>]
+Write-LogException [-Record] <ErrorRecord> [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -45,16 +45,16 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Raw
-{{ Fill Raw Description }}
+### -Record
+{{ Fill Record Description }}
 
 ```yaml
-Type: SwitchParameter
+Type: ErrorRecord
 Parameter Sets: (All)
 Aliases:
 
-Required: False
-Position: Named
+Required: True
+Position: 0
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-GitRevision
+# New-RepositoryRegistration
 
 ## SYNOPSIS
 {{ Fill in the Synopsis }}
@@ -13,7 +13,9 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Get-GitRevision [[-Path] <String>] [-Long] [-Raw] [-WhatIf] [-Confirm] [<CommonParameters>]
+New-RepositoryRegistration [-Path] <String> [-Name] <String> [-RepositoryUrl] <String> [-User] <String>
+ [-UseBuildautomation] [[-ExportPath] <String>] [[-BuildConfig] <String>] [[-BuildScript] <String>] [-Force]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -30,6 +32,36 @@ PS C:\> {{ Add example code here }}
 
 ## PARAMETERS
 
+### -BuildConfig
+{{ Fill BuildConfig Description }}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 5
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -BuildScript
+{{ Fill BuildScript Description }}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 6
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
 ### -Confirm
 Prompts you for confirmation before running the cmdlet.
 
@@ -45,46 +77,106 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Long
-Long revision format
+### -ExportPath
+{{ Fill ExportPath Description }}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -Force
+{{ Fill Force Description }}
 
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
-Aliases: l
+Aliases:
 
 Required: False
 Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -Name
+{{ Fill Name Description }}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
 ### -Path
-Repository Path
+{{ Fill Path Description }}
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases: p
+Aliases:
 
-Required: False
+Required: True
 Position: 0
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -Raw
-No logs, clean output
+### -RepositoryUrl
+{{ Fill RepositoryUrl Description }}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 2
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -UseBuildautomation
+{{ Fill UseBuildautomation Description }}
 
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
-Aliases: r
+Aliases:
 
 Required: False
 Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -User
+{{ Fill User Description }}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 3
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False

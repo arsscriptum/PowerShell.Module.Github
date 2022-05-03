@@ -1,6 +1,6 @@
 ---
-external help file: CodeCastor.PowerShell.GitHub-help.xml
-Module Name: CodeCastor.PowerShell.GitHub
+external help file: PowerShell.Module.Github-help.xml
+Module Name: PowerShell.Module.Github
 online version:
 schema: 2.0.0
 ---
@@ -13,8 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Get-PublicRepositories [-User] <String> [[-Credential] <PSCredential>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+Get-PublicRepositories [-User] <String> [-Remote] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -46,23 +45,23 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Credential
-{{ Fill Credential Description }}
+### -Remote
+{{ Fill Remote Description }}
 
 ```yaml
-Type: PSCredential
+Type: SwitchParameter
 Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -User
-{{ Fill User Description }}
+Github account username
 
 ```yaml
 Type: String
@@ -72,7 +71,7 @@ Aliases:
 Required: True
 Position: 0
 Default value: None
-Accept pipeline input: False
+Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
@@ -97,7 +96,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
+### System.String
 
 ## OUTPUTS
 

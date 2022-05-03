@@ -1,6 +1,6 @@
 ---
-external help file: CodeCastor.PowerShell.GitHub-help.xml
-Module Name: CodeCastor.PowerShell.GitHub
+external help file: PowerShell.Module.Github-help.xml
+Module Name: PowerShell.Module.Github
 online version:
 schema: 2.0.0
 ---
@@ -13,8 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Initialize-Repository [-Url] <String> [-Path] <String> [-Raw] [-Force] [-Quiet] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+Initialize-Repository [-Url] <String> [-Force] [-Quiet] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -61,21 +60,6 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -Path
-Repository Path
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: p
-
-Required: True
-Position: 1
-Default value: None
-Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
 ### -Quiet
 No logs, clean output
 
@@ -83,21 +67,6 @@ No logs, clean output
 Type: SwitchParameter
 Parameter Sets: (All)
 Aliases: q
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -Raw
-No logs, clean output
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: r
 
 Required: False
 Position: Named

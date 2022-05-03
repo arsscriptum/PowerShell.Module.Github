@@ -1,6 +1,6 @@
 ---
-external help file: CodeCastor.PowerShell.GitHub-help.xml
-Module Name: CodeCastor.PowerShell.GitHub
+external help file: PowerShell.Module.Github-help.xml
+Module Name: PowerShell.Module.Github
 online version:
 schema: 2.0.0
 ---
@@ -31,7 +31,7 @@ PS C:\> {{ Add example code here }}
 ## PARAMETERS
 
 ### -Force
-{{ Fill Force Description }}
+no question
 
 ```yaml
 Type: SwitchParameter
@@ -41,12 +41,12 @@ Aliases:
 Required: False
 Position: Named
 Default value: None
-Accept pipeline input: False
+Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
 ### -Name
-The repository name
+The repository name, including the username like arsscriptum/ProcessTest
 
 ```yaml
 Type: String
@@ -66,6 +66,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## INPUTS
 
 ### System.String
+
+### System.Management.Automation.SwitchParameter
 
 ## OUTPUTS
 

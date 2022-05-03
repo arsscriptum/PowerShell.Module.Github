@@ -1,6 +1,6 @@
 ---
-external help file: CodeCastor.PowerShell.GitHub-help.xml
-Module Name: CodeCastor.PowerShell.GitHub
+external help file: PowerShell.Module.Github-help.xml
+Module Name: PowerShell.Module.Github
 online version:
 schema: 2.0.0
 ---
@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Set-RepositoryVisibility [-Repository] <String> [-Private] [<CommonParameters>]
+Set-RepositoryVisibility [-Name] <String> [-Visibility] <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -30,23 +30,8 @@ PS C:\> {{ Add example code here }}
 
 ## PARAMETERS
 
-### -Private
-{{ Fill Private Description }}
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Repository
-The repository
+### -Name
+The repository name
 
 ```yaml
 Type: String
@@ -55,6 +40,22 @@ Aliases:
 
 Required: True
 Position: 0
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -Visibility
+The repository visibility
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+Accepted values: public, private
+
+Required: True
+Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
