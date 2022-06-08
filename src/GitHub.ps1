@@ -276,7 +276,7 @@ function Get-Repositories {
  
     try{
         $Response = ''
-        $Token= Get-GithubAccessToken
+        $Token= Get-GithubAccessToken -User $User
         $UserCredz = Get-GithubUserCredentials
         $AppCredz = Get-GithubAppCredentials
         if($UserCredz.UserName -ne $User){
@@ -298,7 +298,7 @@ function Get-Repositories {
         
         Write-Verbose "IRequestUrl $RequestUrl"
 
-        $AccessToken = (Get-GithubAccessToken)
+        $AccessToken = (Get-GithubAccessToken -User 'default')
         $HeadersData = @{
             'Accept' =  'application/vnd.github.v3+json'
             'User-Agent' = Get-GithubModuleUserAgent

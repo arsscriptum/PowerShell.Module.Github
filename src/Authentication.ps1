@@ -50,27 +50,39 @@ function Set-GithubUserCredentials {
 }
 function Set-GithubAppCredentials { 
     [CmdletBinding(SupportsShouldProcess)]
-    param()
+    param(
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, HelpMessage="Git Username")]
+        [String]$Client,
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, HelpMessage="Git Username")]
+        [String]$Secret 
+        )
     
     if( $ExecutionContext -eq $null ) { throw "not in module"; return "" ; }
     $ModuleName = ($ExecutionContext.SessionState).Module
-    Write-Host "✅ Register-AppCredentials -Id $ModuleName -Username $(Get-GithubDefaultUsername) -Password $(Get-GithubAccessToken)"
-    Register-AppCredentials -Id $ModuleName -Username $(Get-GithubDefaultUsername) -Password $(Get-GithubAccessToken)
+    $CredId = "$ModuleName-App"
+    Write-Host "CredId $CredId ModuleName $ModuleName"
+
+    
+    Write-Host "✅ Register-AppCredentials -Id $CredId -Username $Client -Password $Secret"
+    Register-AppCredentials -Id $CredId -Username $Client -Password $Secret
     
 }
 
-function Get-GithubUserCredentials { 
+function Get-GithubAppCredentials { 
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$false, ValueFromPipeline=$true, HelpMessage="Overwrite if present")]
         [String]$Id
     )
-    $Credz =  Get-AppCredentials "User-Github-arsscriptum"
-
+    if( $ExecutionContext -eq $null ) { throw "not in module"; return "" ; }
+    $ModuleName = ($ExecutionContext.SessionState).Module
+     $CredId = "$ModuleName-App"
+    $Credz =  Get-AppCredentials $CredId
+    
     return $Credz
 }
 
-function Get-GithubAppCredentials { 
+function Get-GithubUserCredentials { 
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$false, ValueFromPipeline=$true, HelpMessage="Overwrite if present")]

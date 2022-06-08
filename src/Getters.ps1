@@ -25,6 +25,19 @@ function Get-GithubAccessToken {
         $RegPath = Join-Path $BaseRegPath $User
     }
     
+    if(($User -eq $Null) -Or ($User -Eq "")){
+        Write-Verbose "Getting Default Token..."
+        $TokenPresent = Test-RegistryValue -Path "$BaseRegPath" -Entry 'default_access_token'
+        if( $TokenPresent -eq $true ) {
+            Write-Verbose "Getting Default Token in registry..."
+            $Token = Get-RegistryValue -Path "$BaseRegPath" -Entry 'default_access_token'
+            return $Token
+        }
+        if( $Env:REDDIT_ACCESSTOKEN -ne $null ) { 
+            Write-Verbose "Getting Default Token in ENV..."
+            return $Env:REDDIT_ACCESSTOKEN  
+        }    
+    }
     $TokenPresent = Test-RegistryValue -Path "$RegPath" -Entry 'access_token'
     Write-Verbose "Look in $RegPath $User"
     if( $TokenPresent -eq $true ) {
