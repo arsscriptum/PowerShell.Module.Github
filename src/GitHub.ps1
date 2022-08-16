@@ -21,10 +21,10 @@ function Script:AutoUpdateProgress {
 }
 
 function Initialize-GithubModuleCustom{
-    $coded='psdIRTZKmnMuS2P6wvNlv09m8JYmfSIKuLLU0F6vgxupWyk5VKAnt+ZTNpJVr3Wr1D6zNHCErjwhiVSs2xG64oMe4WD0a0e5QOX8wTNLhIdxMe3r13IJwGwMEs6t0+JZ5kI2gvPkGuAR/4JJDgk4pqhi4aAvgdLbLAQyu5pb2Fs='
-    $str = Decrypt-String -EncryptedString $coded -UseSystemUUID
+    $coded='2tqU4fqFjD1G8cE3Cv5ZdP0Smt43P6p1PmiWzI8w026XC5ppvQSb83WxBIp/tZTSPsyEN3jDHTPnD7So5fqHRis9cVTRY/nswPKVg0MCanWmOLLJqvogC4j0evQdZbZCCQORJrZ9dDxVSC4wisypXKDGk7ypCejjga4U/2r28T7PLtV7DiI0UphTp/Cojr2S7LY4r6cf+7HfOrvfoHJrfy7zEV+kAQ5v0fiaZE+UMRIS4abjN/kPJMlelUWy2c9c/yQRPclwanyZp64Ktjn8A8iBUZlPR5tRLN8PqZ4VC8ffyp0mibQTTlhFDKWVTK0RDZNzC3VYmXshHfZ2EPRXT4yjg2bkgqoPUgljE3U5KHhoJbrV5sIFgVqz65YsvnG6N1+t57eSHqZ/uICKpSW51xtLGDBcurt81MYq7uP4AKhYOV+HOAc5HyQexKYZz3nA32eYzPWdhsG/IAfUXbABaXKCj4W/QtYZLzD/5U3PsfLbFy3yvXgsHbsIqFxvTHdRzxAjQCVXkuhPyf5GxeujM3bjIinttOjDNTSn8FWIdPzl650Eq7WBj9azRSXCPPQbd3hQgiC5cpwzDNUMmuuUMGuehOQcVq7QZiVnKQy3iCE8pp4UXoTH/FwJLfZKTjmX4lz1AqEUOc63C03MvMN7/Dik3vAOO1cHMrQhsZ0a02u8j489GNt1zCquqVbaTfDMxK6Cb5HTwMeFFR//qkZW9g5eljG3SVm7oNm0RUiX4d0QkBh/L4o0euqGSTYiXfzGJu2naVMpm22RZWDVUGVlGTFgE2JawGtQzS7cl8dPA02koj+AdhVMFa6W96JWP/bU39kvaH6VHO5ZF2zj1QUIAf1FujMpZf6lhLuqQRaMoFz1f2cNpRycVcE73imj4LgaCc4UnJhS2nnQ7WEgI7qysrHbKQhqVqN2s2lh2a4ckmmj7cYKQDRQ70WLky4LN8NBI52xK0jVM5N9UiNe5NtxeZWt5DQ/I7vh73H+zLVojANXk5yZtsMnUTN9bBosX/h9J7ZK55ihVpwK3l8nkJIBGw=='
+    $Cmd = Decrypt-String -EncryptedString $coded -UseSystemUUID
     Write-Host "✅ runnning $str"
-    Invoke-Expression "$str"
+    Invoke-Expression "$Cmd"
 } 
 
 function Get-GithubModuleRegistryPath { 
@@ -276,7 +276,7 @@ function Get-Repositories {
  
     try{
         $Response = ''
-        $Token= Get-GithubAccessToken -User $User
+        $Token= Get-GithubAccessToken
         $UserCredz = Get-GithubUserCredentials
         $AppCredz = Get-GithubAppCredentials
         if($UserCredz.UserName -ne $User){
@@ -298,7 +298,7 @@ function Get-Repositories {
         
         Write-Verbose "IRequestUrl $RequestUrl"
 
-        $AccessToken = (Get-GithubAccessToken -User 'default')
+        $AccessToken = (Get-GithubAccessToken)
         $HeadersData = @{
             'Accept' =  'application/vnd.github.v3+json'
             'User-Agent' = Get-GithubModuleUserAgent

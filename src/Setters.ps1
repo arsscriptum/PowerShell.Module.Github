@@ -13,17 +13,16 @@ function Set-GithubAccessToken{
         [Parameter(Mandatory=$true, ValueFromPipeline=$true, HelpMessage="Overwrite if present")]
         [ValidateNotNullOrEmpty()]
         [String]$Token,
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true, HelpMessage="Overwrite if present")]
-        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory=$false, ValueFromPipeline=$true, HelpMessage="Overwrite if present")]
         [String]$Username,  
         [Parameter(Mandatory=$false, ValueFromPipeline=$true, HelpMessage="Overwrite if present")]
         [switch]$Default,        
         [Parameter(Mandatory=$false, ValueFromPipeline=$true, HelpMessage="Overwrite if present")]
         [switch]$Force      
     )
-    $BaseRegPath = Get-GithubModuleRegistryPath
+    $RegPath = $BaseRegPath = Get-GithubModuleRegistryPath
     if( $RegPath -eq "" ) { throw "not in module"; return ;}
-    $RegPath = Join-Path $BaseRegPath $Username
+    
 
     $TokenPresent = Test-RegistryValue -Path "$RegPath" -Entry 'access_token'
     if( $TokenPresent ){ 
@@ -32,13 +31,28 @@ function Set-GithubAccessToken{
             return;
         }
     }
-    if($Default){
-        [environment]::SetEnvironmentVariable('GITHUB_ACCESSTOKEN',"$Token",'Process')    
+
+    if($PSBoundParameters.ContainsKey('Default')){
+        Set-EnvironmentVariable -Name 'GITHUB_ACCESSTOKEN' -Value "$Token" -Scope 'Session'    
+        Set-EnvironmentVariable -Name 'GITHUB_ACCESSTOKEN' -Value "$Token" -Scope 'User'    
         Write-Verbose "set $BaseRegPath default_access_token"
         $ret = New-RegistryValue -Path "$BaseRegPath" -Name 'default_access_token' -Value $Token -Type 'string'
     }
-    Write-Verbose "set $RegPath access_token"
-    $ret = New-RegistryValue -Path "$RegPath" -Name 'access_token' -Value $Token -Type 'string'
+    if(($Username -ne $Null ) -And ($Username.Count -gt 0)){
+        $RegPath = Join-Path $BaseRegPath $Username
+        Write-Verbose "set $RegPath access_token"
+        $ret = New-RegistryValue -Path "$RegPath" -Name 'access_token' -Value $Token -Type 'string'
+        $TokenPresent = Test-RegistryValue -Path "$RegPath" -Entry 'access_token'
+        if( $TokenPresent ){ 
+            Write-Verbose "Token already configured"
+            if($Force -eq $False){
+                return;
+            }
+        }
+        $ret = New-RegistryValue -Path "$RegPath" -Name 'access_token' -Value $Token -Type 'string'
+    }
+    
+
 
     return $ret    
 }
