@@ -10,6 +10,9 @@ New-Alias -Name listrepo -value Get-GHRepositories -Force
 New-Alias -Name listprivaterepo -value Get-PrivateRepositories -Force
 New-Alias -Name listpublicrepo -value Get-PublicRepositories -Force
 
+New-Alias -Name giturl -value Get-GitRepoUrl -Force
+
+
 # git status
 New-Alias -Name state -Value Get-Status -Force
 New-Alias -Name stat -Value Get-Status -Force

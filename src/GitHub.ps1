@@ -63,7 +63,7 @@ function Get-GitRevision {
         pushd $Path
         $Revision = ''  
         if($ShowMessages){
-            Write-ChannelMessage "Retrieving git revision for $Path"
+            Write-Log "Retrieving git revision for $Path"
         }
         If( $PSBoundParameters.ContainsKey('Long') -eq $True ){
             $Revision = git rev-parse HEAD 2> $TmpFile
@@ -72,7 +72,7 @@ function Get-GitRevision {
         }
         if($?){
             if($ShowMessages){
-                Write-ChannelResult " Success. Revision: $Revision"
+                Write-Log " Success. Revision: $Revision"
             }          
         }else{
             $ErrorStr = Get-Content $TmpFile -Raw
@@ -224,7 +224,7 @@ function Get-RepositoriesFromWeb{
     try{
         $RepoList = @()
 
-        Write-ChannelMessage "Retrieving repositories for $User......"
+        Write-Log "Retrieving repositories for $User......"
         $URL="https://github.com/" + $User + "?tab=repositories"
         if($PSBoundParameters.ContainsKey('Credential')){
             $u=$Credential.UserName
@@ -269,21 +269,19 @@ function Get-Repositories {
          [Parameter(Mandatory=$false,ValueFromPipeline=$true, 
             HelpMessage="Visibility") ]
          [ValidateSet('public','private')]
-         [string]$Visibility='private',
-         [Parameter(Mandatory=$false,ValueFromPipeline=$true) ]
-         [switch]$Remote
+         [string]$Visibility='private'
      )
  
     try{
+
         $Response = ''
         $Token= Get-GithubAccessToken
         $UserCredz = Get-GithubUserCredentials
         $AppCredz = Get-GithubAppCredentials
-        if($UserCredz.UserName -ne $User){
-            $Remote = $True
-        }
+        
 
-        Write-ChannelMessage "Retrieving repositories for $User......"
+
+        Write-Log "Retrieving repositories for $User......"
         Write-verbose "Retrieving repositories for $User......"
         Write-verbose "GithubAccessToken $Token"
         $headers = @{
@@ -291,8 +289,9 @@ function Get-Repositories {
             "Authorization" = $Token
         }
 
+        # RequestUrl for myself differs from the url when I query repos of others
         $RequestUrl = "https://api.github.com/user/repos?sort=updated&direction=desc&per_page=100&visibility=$Visibility" 
-        if($Remote){
+        if($UserCredz.UserName -ne $User){
             $RequestUrl = "https://api.github.com/users/$User/repos?type=all&sort=updated&direction=desc&per_page=100"     
         }
         
@@ -339,21 +338,26 @@ function Get-Repositories {
 function Get-PublicRepositories {
     [CmdletBinding(SupportsShouldProcess)]
      param(
-         [Parameter(Mandatory=$true,ValueFromPipeline=$true, 
+         [Parameter(Mandatory=$false,ValueFromPipeline=$true, 
             HelpMessage="Github account username") ]
-         [string]$User,
-         [switch]$Remote
+         [string]$User
      )
-     return Get-Repositories -User $User -Visibility 'public' -Remote:$Remote
+     if($PSBoundParameters.ContainsKey('User') -eq $False){
+        $User = (Get-GithubUserCredentials).UserName
+     }
+     return Get-Repositories -User $User -Visibility 'public'
  }
 
 function Get-PrivateRepositories {
     [CmdletBinding(SupportsShouldProcess)]
      param(
-         [Parameter(Mandatory=$true,ValueFromPipeline=$true, 
+         [Parameter(Mandatory=$false,ValueFromPipeline=$true, 
             HelpMessage="Github account username") ]
          [string]$User
      )
+     if($PSBoundParameters.ContainsKey('User') -eq $False){
+        $User = (Get-GithubUserCredentials).UserName
+     }
      return Get-Repositories -User $User
  }
 
@@ -426,7 +430,7 @@ function Initialize-Repository {
 
         }
         if($ShowMessages) {
-             Write-ChannelMessage "CLONING $Url."
+             Write-Log "CLONING $Url."
         }
 
         $GitExe = Get-GitExecutablePath
@@ -469,16 +473,16 @@ function Initialize-Repository {
     $Url = Resolve-RepositoryUrl -Repository $Repository -User $User
     Write-Verbose "RESOLVE NEW CLONE URL $Url"
     
-    Write-ChannelMessage "CLONING URL $Url."
+    Write-Log "CLONING URL $Url."
 
     $TmpFile = (New-TemporaryFile).Fullname
     $GitExe = Get-GitExecutablePath
     try{
         &"$GitExe" clone -j8 --recurse-submodules $Url 1> $TmpFile
-        Write-ChannelResult  "Success" 
+        Write-Log  "Success" 
         if($Raw){
             $log = Get-Content $TmpFile -Raw
-            Write-ChannelResult  "$log" 
+            Write-Log  "$log" 
         }
         if($ShowExplorer){
             $ExplorerExe = (get-command 'explorer.exe').Source
@@ -550,12 +554,12 @@ function Initialize-RepositoryAdvanced {
         }
 
         if( ($ProcessExitCode -ne 0) -And ($Quiet -eq $false) ) {
-            Write-ChannelResult " ERROR Git exited with status code $ProcessExitCode" -Warning
+            Write-Log " ERROR Git exited with status code $ProcessExitCode" -Warning
             throw " ERROR Git exited with status code $ProcessExitCode"
         }
 
         if($Quiet -eq $false){
-            Write-ChannelResult  "Git Clone $Repository"       
+            Write-Log  "Git Clone $Repository"       
         }
 
     } catch {
@@ -584,6 +588,26 @@ function Reset-GitRepo{
     
 }
 
+
+
+function Get-GitRepoUrl{
+    [CmdletBinding(SupportsShouldProcess)]
+    Param
+    (
+        [Alias('q')]
+        [Parameter(Mandatory=$false)]
+        [switch]$Quiet
+    )
+
+    $GitExe = Get-GitExecutablePath
+
+    if($Quiet){
+        &"$GitExe" 'remote' 'get-url' '--all' 'origin' | out-null
+    }else{
+        &"$GitExe" 'remote' 'get-url' '--all' 'origin' 
+    }
+    
+}
 
 
 
@@ -705,7 +729,7 @@ function Sync-UserRepositories
                 
                 ForEach($exc in $Exceptions){
                     if($exc -match $Name){
-                        Write-ChannelResult "$Name EXCEPTION REPO!" -Warning 
+                        Write-Log "$Name EXCEPTION REPO!" -Warning 
                         continue
                     }    
                 }
@@ -772,16 +796,16 @@ function Push-Changes {
         }
 
         $GitArgs=@("add", "*")
-        Write-ChannelMessage  "git add"
+        Write-Log  "git add"
         $Null = Invoke-Git -GitArgument $GitArgs -RedirectOutput:$Quiet
 
         $GitArgs=@("commit", "-a", "-m", "auto")
-        Write-ChannelMessage "git commit"
+        Write-Log "git commit"
         $Null = Invoke-Git -GitArgument $GitArgs -RedirectOutput:$Quiet
       
         $GitArgs=@('push')
         if($Authenticated){ $GitArgs += (Get-GithubUrl -Authenticated) }
-        Write-ChannelMessage "git push"
+        Write-Log "git push"
         $Null = Invoke-Git -GitArgument $GitArgs -RedirectOutput:$Quiet
         
         popd
@@ -809,7 +833,7 @@ function Push-Changes {
     $Clean = $True
     $AnchorClean='nothing to commit, working tree clean'
     $AnchorChange='Changes to be committed:'
-    Write-ChannelMessage "Git Status"
+    Write-Log "Git Status"
     $GitExe = Get-GitExecutablePath
     if($Raw){
         &"$GitExe" status
@@ -818,7 +842,7 @@ function Push-Changes {
     $Result = &"$GitExe" status 2> $TmpFile
     $ntc=($Result -match $AnchorClean) ; if($ntc -eq $AnchorClean) {$Clean = $True;$Dirty = $False}
     $ntc=($Result -match $AnchorChange) ; if($ntc -eq $AnchorChange) {$Clean = $False;$Dirty = $True}
-    if($Clean){ Write-ChannelResult "$AnchorClean"  ; return }
+    if($Clean){ Write-Log "$AnchorClean"  ; return }
     if($Dirty){
         
          $Mods=($Result | select-string 'modified' -Raw -List)
@@ -864,7 +888,7 @@ function Push-Changes {
 
  function Show-Diff{
 
-    Write-ChannelMessage "Diff"
+    Write-Log "Diff"
     $GitExe = Get-GitExecutablePath
     &"$GitExe" difftool
 }
@@ -885,18 +909,18 @@ function Get-Latest {
 
     if($Recurse){
         
-        Write-ChannelMessage "Pulling Latest code for $Repository and all sub modules..." 
+        Write-Log "Pulling Latest code for $Repository and all sub modules..." 
         &"$GitExe"  pull --recurse
        
-        Write-ChannelMessage "Rebasing all sub modules..." 
+        Write-Log "Rebasing all sub modules..." 
         &"$GitExe"  submodule update --remote --rebase
     }else{
        
-        Write-ChannelMessage "Pulling Latest code for $Repository"
+        Write-Log "Pulling Latest code for $Repository"
         &"$GitExe"  pull
     }
    
-    Write-ChannelMessage "Operation completed"  
+    Write-Log "Operation completed"  
 }
 
 function Resolve-RepositoryUrl {
@@ -951,15 +975,15 @@ function New-SubModule {
         $SplitUrl = Split-RepositoryUrl -Url $Url
         $NewPath = (Get-Location).Path + '\' + $SplitUrl.Basename
         $GitExe = Get-GitExecutablePath
-        Write-ChannelMessage "Add submodule from $Url"
+        Write-Log "Add submodule from $Url"
         &"$GitExe" submodule add $Url 1> $stdout_tmp
         $Mod = (gci $NewPath -Recurse -File)
         $ModCount = $Mod.Count
-        Write-ChannelResult " clone complete $ModCount files"
-         Write-ChannelMessage "Cloning sub modules"
+        Write-Log " clone complete $ModCount files"
+         Write-Log "Cloning sub modules"
         &"$GitExe" submodule update --init --recursive 1>> $stdout_tmp
 
-         Write-ChannelResult "lgs are in $stdout_tmp"
+         Write-Log "lgs are in $stdout_tmp"
 
     } catch {
         Show-ExceptionDetails($_) -ShowStack
@@ -1016,7 +1040,7 @@ function New-GitHubRepository {     # NOEXPORT
         $AccessToken= Get-GithubAccessToken
         $Token= Get-GithubAccessToken
 
-        Write-ChannelMessage "Creating New Repository $Name => Private $Private"
+        Write-Log "Creating New Repository $Name => Private $Private"
         Write-verbose "GithubAccessToken $Token"
         $privateStr = 'false'
         if($Private) {$privateStr = 'true' }
@@ -1164,6 +1188,24 @@ To push an existing local repository to Github run these commands:
 function Remove-Repository {
      param(
         [Parameter(Mandatory=$true,ValueFromPipeline=$true, 
+            HelpMessage="The repository name") ]
+        [string]$Name  
+     )
+ 
+    try{
+        $GhExe = (Get-Command gh.exe).Source
+        
+        &"$GhExe" repo delete $Name
+        
+    }
+    catch{
+         Show-ExceptionDetails($_) -ShowStack
+    }
+}
+ 
+ <#
+     param(
+        [Parameter(Mandatory=$true,ValueFromPipeline=$true, 
             HelpMessage="The repository name, including the username like arsscriptum/ProcessTest") ]
         [string]$Name,
         [Parameter(Mandatory=$false,ValueFromPipeline=$true, 
@@ -1177,14 +1219,14 @@ function Remove-Repository {
         $Token= Get-GithubAccessToken
 
         Write-verbose "GithubAccessToken $Token"
-        Write-ChannelMessage "Delete Git HubRepository : $Name"
+        Write-Log "Delete Git HubRepository : $Name"
 
         if($Force -eq $False){
             Write-Host -ForegroundColor DarkRed "[CONFIRMATION 1] " -NoNewline
             $a=Read-Host -Prompt "DELETING REPOSITORY $Name ! Are you sure (y/N)?" ; if($a -notmatch "y") {return;}
              Write-Host -ForegroundColor DarkRed "[CONFIRMATION 2] " -NoNewline
             $a=Read-Host -Prompt "Type in the repository name again:" ; if($a -ne "$Name") {
-                Write-ChannelResult "EXITED" -Warning
+                Write-Log "EXITED" -Warning
                 return;
             }
         }
@@ -1215,14 +1257,14 @@ function Remove-Repository {
         $ParamStr = $paramHash.ToString()
         #should process
         $r = Invoke-RestMethod @paramHash
-        Write-ChannelResult "DELETED $Name"
+        Write-Log "DELETED $Name"
 
     }catch{
         Write-Host "[ERROR] " -f DarkRed -NoNewLine
         Write-Host "message $_" -f DarkYellow
     }
  } 
-
+#>
 
 
 

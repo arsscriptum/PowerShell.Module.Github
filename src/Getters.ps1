@@ -12,55 +12,21 @@ function Get-GithubAccessToken {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$false, ValueFromPipeline=$true, HelpMessage="Git Username")]
-        [String]$User,
-        [Parameter(Mandatory=$false, ValueFromPipeline=$true, HelpMessage=".")]
-        [switch]$NoDefault        
+        [String]$User   
     )
+    if($PSBoundParameters.ContainsKey('User') -eq $False){
+        $User = (Get-GithubUserCredentials).UserName
+    }
 
     $BaseRegPath = Get-GithubModuleRegistryPath
     if( $RegPath -eq "" ) { throw "not in module"; return ;}
     
-    $RegPath = $BaseRegPath
-    if($PSBoundParameters.ContainsKey('User')){
-        $RegPath = Join-Path $BaseRegPath $User
-    }
-    
-    if(($User -eq $Null) -Or ($User -Eq "")){
-        Write-Verbose "Getting Default Token..."
-        $TokenPresent = Test-RegistryValue -Path "$BaseRegPath" -Entry 'default_access_token'
-        if( $TokenPresent -eq $true ) {
-            Write-Verbose "Getting Default Token in registry..."
-            $Token = Get-RegistryValue -Path "$BaseRegPath" -Entry 'default_access_token'
-            return $Token
-        }
-        if( $Env:REDDIT_ACCESSTOKEN -ne $null ) { 
-            Write-Verbose "Getting Default Token in ENV..."
-            return $Env:REDDIT_ACCESSTOKEN  
-        }    
-    }
+    $RegPath = Join-Path $BaseRegPath $User
+
     $TokenPresent = Test-RegistryValue -Path "$RegPath" -Entry 'access_token'
-    Write-Verbose "Look in $RegPath $User"
-    if( $TokenPresent -eq $true ) {
-        Write-Verbose "Getting User Token for $User"
-        $Token = Get-RegistryValue -Path "$RegPath" -Entry 'access_token'
-        return $Token
-    }
-    if(-not($NoDefault)){
-        Write-Verbose "Getting Default Token..."
-        $TokenPresent = Test-RegistryValue -Path "$BaseRegPath" -Entry 'default_access_token'
-        if( $TokenPresent -eq $true ) {
-            Write-Verbose "Getting Default Token in registry..."
-            $Token = Get-RegistryValue -Path "$BaseRegPath" -Entry 'default_access_token'
-            return $Token
-        }
-        if( $Env:REDDIT_ACCESSTOKEN -ne $null ) { 
-            Write-Verbose "Getting Default Token in ENV..."
-            return $Env:REDDIT_ACCESSTOKEN  
-        }    
-    }
-    
-    return $null
+    Get-RegistryValue -Path "$RegPath" -Entry 'access_token'
 }
+
 
 # =============================================================
 # GET DefaultUsername
