@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Get-PrivateRepositories [-User] <String> [-WhatIf] [-Confirm] [<CommonParameters>]
+Get-PrivateRepositories [[-Username] <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -45,7 +45,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -User
+### -Username
 Github account username
 
 ```yaml
@@ -53,7 +53,7 @@ Type: String
 Parameter Sets: (All)
 Aliases:
 
-Required: True
+Required: False
 Position: 0
 Default value: None
 Accept pipeline input: True (ByValue)

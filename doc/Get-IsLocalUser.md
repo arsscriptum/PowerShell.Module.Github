@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-PublicRepositories
+# Get-IsLocalUser
 
 ## SYNOPSIS
 {{ Fill in the Synopsis }}
@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Get-PublicRepositories [[-Username] <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Get-IsLocalUser [-Username] <String> [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -46,14 +46,14 @@ Accept wildcard characters: False
 ```
 
 ### -Username
-Github account username
+Username
 
 ```yaml
 Type: String
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 0
 Default value: None
 Accept pipeline input: True (ByValue)

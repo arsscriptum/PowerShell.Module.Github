@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Remove-Repository [-Name] <String> [-Force] [<CommonParameters>]
+Remove-Repository [-Name] <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -30,23 +30,8 @@ PS C:\> {{ Add example code here }}
 
 ## PARAMETERS
 
-### -Force
-no question
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
 ### -Name
-The repository name, including the username like arsscriptum/ProcessTest
+The repository name
 
 ```yaml
 Type: String
@@ -66,8 +51,6 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## INPUTS
 
 ### System.String
-
-### System.Management.Automation.SwitchParameter
 
 ## OUTPUTS
 

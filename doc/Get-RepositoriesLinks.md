@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-PublicRepositories
+# Get-RepositoriesLinks
 
 ## SYNOPSIS
 {{ Fill in the Synopsis }}
@@ -13,7 +13,8 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Get-PublicRepositories [[-Username] <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Get-RepositoriesLinks [[-Username] <String>] [[-Credential] <PSCredential>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -45,8 +46,23 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Credential
+{{ Fill Credential Description }}
+
+```yaml
+Type: PSCredential
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 1
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Username
-Github account username
+{{ Fill Username Description }}
 
 ```yaml
 Type: String
@@ -56,7 +72,7 @@ Aliases:
 Required: False
 Position: 0
 Default value: None
-Accept pipeline input: True (ByValue)
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -81,7 +97,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### System.String
+### None
 
 ## OUTPUTS
 

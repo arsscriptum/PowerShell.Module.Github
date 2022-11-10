@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-PublicRepositories
+# New-GitHubRepositoryTest
 
 ## SYNOPSIS
 {{ Fill in the Synopsis }}
@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Get-PublicRepositories [[-Username] <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
+New-GitHubRepositoryTest [-Name] <String> [-Private] [-Raw] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -30,13 +30,28 @@ PS C:\> {{ Add example code here }}
 
 ## PARAMETERS
 
-### -Confirm
-Prompts you for confirmation before running the cmdlet.
+### -Name
+The repository name
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 0
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -Private
+{{ Fill Private Description }}
 
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
-Aliases: cf
+Aliases:
 
 Required: False
 Position: Named
@@ -45,29 +60,13 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Username
-Github account username
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 0
-Default value: None
-Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
+### -Raw
+{{ Fill Raw Description }}
 
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
-Aliases: wi
+Aliases:
 
 Required: False
 Position: Named

@@ -13,8 +13,8 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Initialize-GithubModule [-Token] <String> [-User] <String> [-ClonePath] <String> [-Hostname] <String> [-Force]
- [-WhatIf] [-Confirm] [<CommonParameters>]
+Initialize-GithubModule [-Username] <String> [-Password] <String> [-Client] <String> [-Secret] <String>
+ [-Token] <String> [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -31,8 +31,8 @@ PS C:\> {{ Add example code here }}
 
 ## PARAMETERS
 
-### -ClonePath
-Overwrite if present
+### -Client
+{{ Fill Client Description }}
 
 ```yaml
 Type: String
@@ -42,7 +42,7 @@ Aliases:
 Required: True
 Position: 2
 Default value: None
-Accept pipeline input: True (ByValue)
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -61,53 +61,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Force
-Overwrite if present
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -Hostname
-Overwrite if present
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 3
-Default value: None
-Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -Token
-Overwrite if present
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 0
-Default value: None
-Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -User
-Overwrite if present
+### -Password
+{{ Fill Password Description }}
 
 ```yaml
 Type: String
@@ -117,7 +72,52 @@ Aliases:
 Required: True
 Position: 1
 Default value: None
-Accept pipeline input: True (ByValue)
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Secret
+{{ Fill Secret Description }}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 3
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Token
+{{ Fill Token Description }}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 4
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Username
+{{ Fill Username Description }}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 0
+Default value: None
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -142,9 +142,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### System.String
-
-### System.Management.Automation.SwitchParameter
+### None
 
 ## OUTPUTS
 

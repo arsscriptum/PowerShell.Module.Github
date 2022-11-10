@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Get-GithubAccessToken [[-User] <String>] [-NoDefault] [-WhatIf] [-Confirm] [<CommonParameters>]
+Get-GithubAccessToken [[-User] <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -45,23 +45,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -NoDefault
-.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
 ### -User
-Git Username
+Github account username
 
 ```yaml
 Type: String
@@ -97,8 +82,6 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## INPUTS
 
 ### System.String
-
-### System.Management.Automation.SwitchParameter
 
 ## OUTPUTS
 

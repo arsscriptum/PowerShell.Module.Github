@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Set-GithubUserCredentials [-User] <String> [-Password] <String> [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-GithubUserCredentials [-Username] <String> [-Password] <String> [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -60,7 +60,7 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -User
+### -Username
 Git Username
 
 ```yaml

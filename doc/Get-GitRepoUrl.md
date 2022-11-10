@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-PublicRepositories
+# Get-GitRepoUrl
 
 ## SYNOPSIS
 {{ Fill in the Synopsis }}
@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Get-PublicRepositories [[-Username] <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Get-GitRepoUrl [-Quiet] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -45,18 +45,18 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Username
-Github account username
+### -Quiet
+{{ Fill Quiet Description }}
 
 ```yaml
-Type: String
+Type: SwitchParameter
 Parameter Sets: (All)
-Aliases:
+Aliases: q
 
 Required: False
-Position: 0
+Position: Named
 Default value: None
-Accept pipeline input: True (ByValue)
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -81,7 +81,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### System.String
+### None
 
 ## OUTPUTS
 
