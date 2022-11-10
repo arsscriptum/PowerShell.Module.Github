@@ -95,15 +95,15 @@ function Set-RepositoryVisibility {
 
 
 
-function Get-GHRepositories{
+function Get-RepositoriesDetails{
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$true,Position=0)]
-        [String]$User
+        [String]$Username
     )
     try{
         $GHX = (Get-Command 'gh.exe').Source
-        $Content = &"$GHX" "api" "users/$User/repos"
+        $Content = &"$GHX" "api" "users/$Username/repos"
         $ParsedBuffer=$Content | ConvertFrom-Json 
         return $ParsedBuffer
     } catch {

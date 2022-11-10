@@ -8,7 +8,7 @@
 
 
 
-function Set-GithubAccessToken{
+function Set-GithubAccessToken{   # NOEXPORT
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$false, ValueFromPipeline=$true, HelpMessage="Overwrite if present")]
@@ -39,7 +39,7 @@ function Set-GithubAccessToken{
 
 
 
-function Set-GithubUserCredentials { 
+function Set-GithubUserCredentials {    # NOEXPORT
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$true, ValueFromPipeline=$true, HelpMessage="Git Username")]
@@ -54,7 +54,7 @@ function Set-GithubUserCredentials {
     Register-AppCredentials -Id $ModuleName -Username $Username -Password $Password
     
 }
-function Set-GithubAppCredentials { 
+function Set-GithubAppCredentials {    # NOEXPORT
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$true, ValueFromPipeline=$true, HelpMessage="Git Username")]

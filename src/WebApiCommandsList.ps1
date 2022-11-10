@@ -142,7 +142,7 @@ function Get-PrivateRepositories {
 
 
 
-function Get-RepositoriesLinks{
+function Get-RepositoryList{
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$false)]

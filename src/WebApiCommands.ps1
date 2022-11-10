@@ -9,7 +9,7 @@
 
 
 
-function New-GitHubRepositoryTest {     
+function New-GitHubRepository {  # NOEXPORT
      param(
         [Parameter(Mandatory=$true,ValueFromPipeline=$true, 
             HelpMessage="The repository name") ]

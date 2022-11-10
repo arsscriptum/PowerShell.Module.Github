@@ -7,7 +7,7 @@
 #>
 
 
-function Get-GithubModuleRegistryPath { 
+function Get-GithubModuleRegistryPath {  # NOEXPORT
     [CmdletBinding(SupportsShouldProcess)]
     param ()
     if( $ExecutionContext -eq $null ) { throw "not in module"; return "" ; }
@@ -18,7 +18,7 @@ function Get-GithubModuleRegistryPath {
 }
 
 
-function Resolve-RepositoryUrl {
+function Resolve-RepositoryUrl {    # NOEXPORT
     param(
         [parameter(mandatory=$true)]
         [ValidateScript({
@@ -44,7 +44,7 @@ function Resolve-RepositoryUrl {
 
 
 
-function Split-RepositoryUrl {
+function Split-RepositoryUrl {   # NOEXPORT
     [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory=$true, ValueFromPipeline=$true, HelpMessage="Repository Url")]

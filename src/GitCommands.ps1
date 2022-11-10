@@ -121,30 +121,6 @@ function Invoke-Git {
 }
 
 
-
-
-
-function Get-GitRepoUrl{
-    [CmdletBinding(SupportsShouldProcess)]
-    Param
-    (
-        [Alias('q')]
-        [Parameter(Mandatory=$false)]
-        [switch]$Quiet
-    )
-
-    $GitExe = Get-GitExecutablePath
-
-    if($Quiet){
-        &"$GitExe" 'remote' 'get-url' '--all' 'origin' | out-null
-    }else{
-        &"$GitExe" 'remote' 'get-url' '--all' 'origin' 
-    }
-    
-}
-
-
-
 function Save-Changes{
     [CmdletBinding(SupportsShouldProcess)]
     Param

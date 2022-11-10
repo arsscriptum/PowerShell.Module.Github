@@ -7,7 +7,7 @@
 #>
 
 
-function Get-IsLocalUser { 
+function Get-IsLocalUser {    # NOEXPORT
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true, HelpMessage="Username")]
@@ -46,7 +46,7 @@ function Get-AuthorizationHeader { # NOEXPORT
 
 
 
-function Get-GithubAppCredentials { 
+function Get-GithubAppCredentials {    # NOEXPORT
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$false, ValueFromPipeline=$true, HelpMessage="Overwrite if present")]
@@ -60,7 +60,7 @@ function Get-GithubAppCredentials {
     return $Credz
 }
 
-function Get-GithubUserCredentials { 
+function Get-GithubUserCredentials {    # NOEXPORT
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$false, ValueFromPipeline=$true, HelpMessage="Overwrite if present")]
@@ -76,7 +76,7 @@ function Get-GithubUserCredentials {
 }
 
 
-function Get-GithubModuleUserAgent { 
+function Get-GithubModuleUserAgent {    # NOEXPORT
     [CmdletBinding(SupportsShouldProcess)]
     param ()
     $ModuleName = ($ExecutionContext.SessionState).Module
@@ -89,7 +89,7 @@ function Get-GithubModuleUserAgent {
 # =============================================================
 # GET GithubAccessToken
 # =============================================================
-function Get-GithubAccessToken {
+function Get-GithubAccessToken {   # NOEXPORT
     [CmdletBinding(SupportsShouldProcess)]
     param(
          [Parameter(Mandatory=$false,ValueFromPipeline=$true, 
