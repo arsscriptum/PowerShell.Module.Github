@@ -9,7 +9,7 @@
 
 
 
-New-Alias -Name giturl -value Get-GitRepoUrl -Force
+New-Alias -Name giturl -value Get-GithubUrl -Force
 
 # diff
 New-Alias -Name gdiff -Value Show-Diff -Force
