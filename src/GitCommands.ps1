@@ -7,6 +7,34 @@
 #>
 
 
+function Invoke-CloneRepository{
+    [CmdletBinding(SupportsShouldProcess)]
+    Param
+    (
+        [Parameter(Mandatory=$true, ValueFromPipeline=$false, HelpMessage="Url", Position=0)]
+        [Alias('u')]
+        [string]$Url,
+        [Parameter(Mandatory=$false, ValueFromPipeline=$false, HelpMessage="Destination Directory", Position=1)]
+        [Alias('p')]
+        [string]$Path,
+        [Alias('q')]
+        [Parameter(Mandatory=$false)]
+        [switch]$Quiet        
+    )
+  
+
+    Write-Log "git: clone from $Url" 
+
+    $GitExe = Get-GitExecutablePath
+    
+    if($Quiet){
+        &"$GitExe" 'clone' '--recurse-submodules' '-j8' "$Url" "$Path" | out-null
+    }else{
+        &"$GitExe" 'clone' '--recurse-submodules' '-j8' "$Url" "$Path"
+    }    
+}
+
+
 
 function Get-GithubUrl{
     [CmdletBinding(SupportsShouldProcess)]
@@ -15,6 +43,7 @@ function Get-GithubUrl{
         [switch]$Authenticated
     )
     try{
+        Write-Log "git config --get remote.origin.url"
         [string]$UrlString = git config --get remote.origin.url
         [Uri]$GitUrl = $UrlString
         [string]$StrAbsoluteUri = $GitUrl.AbsoluteUri
@@ -268,8 +297,14 @@ function Push-Changes {
     }
 }
 
- function Show-Diff{
 
+function Show-Diff{
+   [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Mandatory=$false,ValueFromPipeline=$true, 
+            HelpMessage="Submodules") ]
+        [switch]$Recurse
+    )
     Write-Log "Diff"
     $GitExe = Get-GitExecutablePath
     &"$GitExe" difftool

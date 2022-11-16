@@ -1,25 +1,30 @@
-
 <#
 #̷𝓍   𝓐𝓡𝓢 𝓢𝓒𝓡𝓘𝓟𝓣𝓤𝓜
 #̷𝓍   🇵​​​​​🇴​​​​​🇼​​​​​🇪​​​​​🇷​​​​​🇸​​​​​🇭​​​​​🇪​​​​​🇱​​​​​🇱​​​​​ 🇸​​​​​🇨​​​​​🇷​​​​​🇮​​​​​🇵​​​​​🇹​​​​​ 🇧​​​​​🇾​​​​​ 🇬​​​​​🇺​​​​​🇮​​​​​🇱​​​​​🇱​​​​​🇦​​​​​🇺​​​​​🇲​​​​​🇪​​​​​🇵​​​​​🇱​​​​​🇦​​​​​🇳​​​​​🇹​​​​​🇪​​​​​.🇶​​​​​🇨​​​​​@🇬​​​​​🇲​​​​​🇦​​​​​🇮​​​​​🇱​​​​​.🇨​​​​​🇴​​​​​🇲​​​​​
-#̷𝓍   
-#̷𝓍   PowerShell GitHub Module
 #>
 
+#===============================================================================
+# LogConfiguration
+#===============================================================================
 
+class LogConfigurationGitHub
+{
+    #ChannelProperties
+    [string]$Channel = 'GIT'
+    [ConsoleColor]$TitleColor = 'DarkCyan'
+    [ConsoleColor]$MessageColor = 'DarkGray'
+    [ConsoleColor]$ErrorColor = 'DarkRed'
+    [ConsoleColor]$SuccessColor = 'DarkGreen'
+    [ConsoleColor]$ErrorDescriptionColor = 'DarkYellow'
+}
 
+function Get-LogConfig {
+    param(
+    )
+    if($Script:LogConfig -eq $Null){
+        $Script:LogConfig = [LogConfigurationGitHub]::new()
+    }
+    return $Script:LogConfig
+}
 
-New-Alias -Name giturl -value Get-GitRepoUrl -Force
-
-# diff
-New-Alias -Name gdiff -Value Show-Diff -Force
-
-# push
-New-Alias -Name gpush -value Push-Changes -Force
-
-
-New-Alias -Name commit -value Save-Changes -Force
-
-# clone
-New-Alias -Name clone -Value Invoke-CloneRepository
-
+Set-LogChannel "github"
