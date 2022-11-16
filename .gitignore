@@ -12,7 +12,7 @@ out/*
 *.RestorePoint.*
 *.Run.ps1
 *.Package.ps1
-
+out.txt
 
 *.psproj
 CustomMenu.inf*tempPoint*
