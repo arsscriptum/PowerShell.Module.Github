@@ -170,3 +170,149 @@ To push an existing local repository to Github run these commands:
 
 
  
+
+
+function Invoke-AutoUpdateProgress_CloneUser{
+    [int32]$PercentComplete = (($Script:StepNumber / $Script:TotalSteps) * 100)
+    if($PercentComplete -gt 100){$PercentComplete = 100}
+    Write-Progress -Activity $Script:ProgressTitle -Status $Script:ProgressMessage -PercentComplete $PercentComplete
+    if($Script:StepNumber -lt $Script:TotalSteps){$Script:StepNumber++}
+}
+
+function Sync-UserRepositories222 {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Mandatory=$true,Position=0,ValueFromPipeline=$true, 
+            HelpMessage="Username or owner of the repositories you want to clone")]
+        [Alias('u', 'usr')]
+        [String]$Username,
+        [Parameter(Mandatory=$true,Position=1,ValueFromPipeline=$true, 
+            HelpMessage="Destination directory")]
+        [Alias('d', 'dst')]
+        [String]$DestinationPath,
+        [Parameter(Mandatory=$false,ValueFromPipeline=$true, 
+            HelpMessage="If set, this flag will make it so that a root folder will be created (named after the user to clone), under which the repositories will be cloned")]
+        [Alias('c')]
+        [switch]$CreateRootFolder,
+        [Parameter(Mandatory=$false,ValueFromPipeline=$true, 
+            HelpMessage="Simulation: dont clone, just list the operations to do and repositories to clone (equivalent to -WhatIf)")]
+        [Alias('l')]
+        [switch]$ListOnly,
+        [Parameter(Mandatory=$false,ValueFromPipeline=$true, 
+            HelpMessage="Overwrite existing directories")]
+        [Alias('f')]
+        [switch]$Force,
+        [Parameter(Mandatory=$false,ValueFromPipeline=$true, 
+            HelpMessage="Open file explorer after download")]
+        [Alias('o')]
+        [switch]$OpenAfterDownload,
+        [Parameter(Mandatory=$false,ValueFromPipeline=$true, 
+            HelpMessage="Less outputs")]
+        [Alias('q')]
+        [switch]$Quiet
+    )
+
+    try{
+
+        if($ListOnly){
+            Write-Verbose "ListOnly         : Setting WHATIF"
+            $WhatIf = $True
+        }
+        if($WhatIf){
+            $ListOnly = $True
+        }
+
+        Write-Verbose "Username         : $Username"
+        Write-Verbose "DestinationPath  : $DestinationPath"
+        Write-Verbose "CreateRootFolder : $CreateRootFolder"
+
+        $ClonePath = $DestinationPath
+
+        if($CreateRootFolder){
+            $ClonePath = Join-Path $DestinationPath $Username
+
+            if($Force){
+                Write-Verbose "Force : deleting $ClonePath"
+                Remove-Item -Path $ClonePath -Recurse -Force -ErrorAction Ignore -WhatIf:$ListOnly | Out-Null
+            }
+            if(Test-Path $ClonePath -PathType Container -ErrorAction Ignore){
+                throw "`"$DestinationPath`" already contains a folder named `"$Username`""
+            }
+
+            Write-Verbose "Creating Root folder: $ClonePath"
+            
+            New-Item -Path $ClonePath -ItemType directory -Force -WhatIf:$ListOnly -ErrorAction Ignore | Out-Null
+        }
+        $LogFile = New-RandomFilename
+
+        # Get all the repositories we want to clone
+        $RepoList = Get-PublicRepositories -Username $Username
+        if(-not $RepoList){
+            throw "No repository found for user $Username"
+        }
+
+        $GitExe = Get-GitExecutablePath
+        if(-not(Test-Path $GitExe -PathType Leaf -ErrorAction Ignore)){
+            throw "`"$GitExe`" not found"
+        } 
+        $Script:ProgressTitle = "STATE: CLONE USER $Username"
+        $TotalTicks = 0
+        $TotalBytes = 0
+        $Script:TotalSteps = $RepoList.Count
+        Write-verbose "Found $RepoCount repositories for $Username"
+        $SyncStopWatch = [System.Diagnostics.Stopwatch]::StartNew()
+        ForEach($Repo in $RepoList){
+
+            $CloneUrl = $Repo.clone_url
+            $RepoName = $Repo.name
+            $Description = $Repo.description
+
+            $RepoClonePath = Join-Path $ClonePath $RepoName
+
+            write-verbose "Cloning $RepoName in `"$RepoClonePath`""
+            Write-Verbose "`"$GitExe`" 'clone' '--recurse-submodules' '-j8' `"$CloneUrl`" `"$RepoClonePath`""
+
+            
+            if($WhatIf){
+                Start-Sleep -Millisecond 5
+                continue;
+            }
+
+            if($Quiet){
+                &"$GitExe" 'clone' '--recurse-submodules' '-j8' "$CloneUrl" "$RepoClonePath" *> $LogFile
+            }else{
+                &"$GitExe" 'clone' '--recurse-submodules' '-j8' "$CloneUrl" "$RepoClonePath"
+            }  
+            [timespan]$ts =  $SyncStopWatch.Elapsed
+            $TotalTicks += $ts.Ticks 
+ 
+            $RepoBytes = (Get-FolderSize "$RepoClonePath" | Select TotalBytes | select -First 1)
+            $TotalBytes += $RepoBytes.TotalBytes
+            $SizeStr = Convert-Bytes $RepoBytes.TotalBytes -Format MB
+            $TotalBytesStr = Convert-Bytes $TotalBytes -Format MB
+            $Script:ProgressMessage = "Cloned {0} of {1} repositories in {2:mm:ss}. Last {3}, Total {4}" -f $Script:StepNumber, $Script:TotalSteps, ([datetime]$TotalTicks), $SizeStr, $TotalBytesStr
+            Invoke-AutoUpdateProgress_CloneUser
+            
+            if($ts.Ticks -gt 0){
+                $ElapsedTimeStr = "`"$RepoName`" cloned in {0:mm:ss}" -f ([datetime]$TotalTicks)
+            }
+
+            Write-Verbose "$ElapsedTimeStr"
+        }
+
+        $Title = "OPERATION COMPLETED"
+        $Message = "Sync Complete for $Username to $ClonePath"
+        $IconPath = Get-ToolsModuleDownloadIconPath
+        Show-SystemTrayNotification $Message $Title $IconPath
+     
+       
+        if($OpenAfterDownload){
+            $ExplorerPath = 'C:\Windows\explorer.exe'
+            &"$ExplorerPath" "$ClonePath"
+        }
+
+
+    }catch{
+        Show-ExceptionDetails $_ -ShowStack
+    }
+}
