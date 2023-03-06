@@ -179,7 +179,7 @@ function Invoke-AutoUpdateProgress_CloneUser{
     if($Script:StepNumber -lt $Script:TotalSteps){$Script:StepNumber++}
 }
 
-function Sync-UserRepositories222 {
+function Sync-UserRepositories {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$true,Position=0,ValueFromPipeline=$true, 

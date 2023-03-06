@@ -8,7 +8,7 @@
 
 
 
-
+New-Alias -Name gitstatus -value Get-GithubAuthenticationStatus -Force
 New-Alias -Name giturl -value Get-GithubUrl -Force
 
 # diff

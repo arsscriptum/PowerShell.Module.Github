@@ -20,7 +20,7 @@ function Get-IsLocalUser {    # NOEXPORT
 
 
 
-function Get-AuthorizationHeader { # NOEXPORT
+function Get-AuthorizationHeader {   # NOEXPORT
     [CmdletBinding()]
     [OutputType([System.String])]
     param (
@@ -46,12 +46,9 @@ function Get-AuthorizationHeader { # NOEXPORT
 
 
 
-function Get-GithubAppCredentials {    # NOEXPORT
+function Get-GithubAppCredentials {    
     [CmdletBinding(SupportsShouldProcess)]
-    param(
-        [Parameter(Mandatory=$false, ValueFromPipeline=$true, HelpMessage="Overwrite if present")]
-        [String]$Id
-    )
+    param()
     if( $ExecutionContext -eq $null ) { throw "not in module"; return "" ; }
     $ModuleName = ($ExecutionContext.SessionState).Module
      $CredId = "$ModuleName-App"
@@ -60,12 +57,9 @@ function Get-GithubAppCredentials {    # NOEXPORT
     return $Credz
 }
 
-function Get-GithubUserCredentials {    # NOEXPORT
+function Get-GithubUserCredentials {    
     [CmdletBinding(SupportsShouldProcess)]
-    param(
-        [Parameter(Mandatory=$false, ValueFromPipeline=$true, HelpMessage="Overwrite if present")]
-        [String]$Id
-    )
+    param()
 
     if( $ExecutionContext -eq $null ) { throw "not in module"; return "" ; }
     $ModuleName = ($ExecutionContext.SessionState).Module
@@ -89,7 +83,7 @@ function Get-GithubModuleUserAgent {    # NOEXPORT
 # =============================================================
 # GET GithubAccessToken
 # =============================================================
-function Get-GithubAccessToken {   # NOEXPORT
+function Get-GithubAccessToken {   
     [CmdletBinding(SupportsShouldProcess)]
     param(
          [Parameter(Mandatory=$false,ValueFromPipeline=$true, 
