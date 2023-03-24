@@ -20,6 +20,6 @@ New-Alias -Name gpush -value Push-Changes -Force
 
 New-Alias -Name commit -value Save-Changes -Force
 
-# clone
-New-Alias -Name clone -Value Invoke-CloneRepository
 
+
+New-Alias -Name gclone -Value Invoke-CloneRepositoryAuthenticated

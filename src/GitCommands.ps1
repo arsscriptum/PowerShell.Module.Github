@@ -35,6 +35,45 @@ function Invoke-CloneRepository{
 }
 
 
+function Invoke-CloneRepositoryAuthenticated{
+    [CmdletBinding(SupportsShouldProcess)]
+    Param
+    (
+        [Parameter(Mandatory=$true, ValueFromPipeline=$false, HelpMessage="Url", Position=0)]
+        [Alias('u')]
+        [string]$Url,
+        [Parameter(Mandatory=$false, ValueFromPipeline=$false, HelpMessage="Destination Directory", Position=1)]
+        [Alias('p')]
+        [string]$Path,
+        [Alias('q')]
+        [Parameter(Mandatory=$false)]
+        [switch]$Quiet        
+    )
+  
+    $u = (Get-GithubUserCredentials).UserName
+    $tok = Get-GithubAccessToken
+    $DataValid = (! ([string]::IsNullOrEmpty($u)) -And (! [string]::IsNullOrEmpty($tok)))
+    
+    $err = "Missing auth data. Username: `"{0}`"  Token: `"{1}`"" -f $u, $tok 
+    if($False -eq $DataValid){
+        Write-Error $err
+        return;
+    }
+    $gitcredz = '//{0}:{1}@' -f $u, $tok 
+    $AuthenticatedUrl = $Url.Replace('//', $gitcredz)
+
+    Write-Log "git: clone from $AuthenticatedUrl" 
+
+    $GitExe = Get-GitExecutablePath
+    
+    if($Quiet){
+        &"$GitExe" 'clone' '--recurse-submodules' '-j8' "$AuthenticatedUrl" "$Path" | out-null
+    }else{
+        &"$GitExe" 'clone' '--recurse-submodules' '-j8' "$AuthenticatedUrl" "$Path"
+    }    
+}
+
+
 
 function Get-GithubUrl{
     [CmdletBinding(SupportsShouldProcess)]
