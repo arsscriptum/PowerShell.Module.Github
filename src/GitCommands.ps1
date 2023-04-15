@@ -39,13 +39,12 @@ function Invoke-CloneRepositoryAuthenticated{
     [CmdletBinding(SupportsShouldProcess)]
     Param
     (
-        [Parameter(Mandatory=$true, ValueFromPipeline=$false, HelpMessage="Url", Position=0)]
-        [Alias('u')]
+        [Parameter(Mandatory=$true, HelpMessage="Url", Position=0)]
         [string]$Url,
-        [Parameter(Mandatory=$false, ValueFromPipeline=$false, HelpMessage="Destination Directory", Position=1)]
-        [Alias('p')]
+        [Parameter(Mandatory=$false, HelpMessage="Destination Directory", Position=1)]
         [string]$Path,
-        [Alias('q')]
+        [Parameter(Mandatory=$false, HelpMessage="Sha Revision to sync after clone")]
+        [string]$Revision,
         [Parameter(Mandatory=$false)]
         [switch]$Quiet        
     )
@@ -62,7 +61,9 @@ function Invoke-CloneRepositoryAuthenticated{
     $gitcredz = '//{0}:{1}@' -f $u, $tok 
     $AuthenticatedUrl = $Url.Replace('//', $gitcredz)
 
-    Write-Log "git: clone from $AuthenticatedUrl" 
+
+    Write-Host "[GIT CLONE] " -n -f DarkCyan
+    Write-Host "git: clone from $AuthenticatedUrl"  -f DarkGray
 
     $GitExe = Get-GitExecutablePath
     
@@ -71,6 +72,23 @@ function Invoke-CloneRepositoryAuthenticated{
     }else{
         &"$GitExe" 'clone' '--recurse-submodules' '-j8' "$AuthenticatedUrl" "$Path"
     }    
+
+    if([string]::IsNullOrEmpty($Revision) -eq $False){
+        Write-Host "[GIT CLONE] " -n -f DarkCyan
+        Write-Host "Revision specified [$Revision], so checking out revision." -f DarkGray
+        if([string]::IsNullOrEmpty($Path) -eq $False){
+            Push-Location "$Path"
+        }else{
+            $NewDir = $u.Segments[$u.Segments.Count-1]
+            $len = $NewDir.Length
+            $NewDir = $NewDir.Substring(0,$len-4)
+            Push-Location "$NewDir"
+        }
+
+        &"$GitExe" 'checkout' "$Revision" 
+
+        Pop-Location
+    }
 }
 
 

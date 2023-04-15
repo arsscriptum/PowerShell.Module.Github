@@ -20,6 +20,7 @@ New-Alias -Name gpush -value Push-Changes -Force
 
 New-Alias -Name commit -value Save-Changes -Force
 
-
+New-Alias -Name redditgetstats -Value Get-GithubSupportStats -Force -Scope Global -Option allscope
+New-Alias -Name redditsavestats -Value Save-GithubSupportStats -Force -Scope Global -Option allscope
 
 New-Alias -Name gclone -Value Invoke-CloneRepositoryAuthenticated
