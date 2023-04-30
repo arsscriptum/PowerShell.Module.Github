@@ -190,6 +190,10 @@ function Sync-UserRepositories {
             HelpMessage="Destination directory")]
         [Alias('d', 'dst')]
         [String]$DestinationPath,
+        [Parameter(Mandatory=$False,Position=1,ValueFromPipeline=$true, 
+            HelpMessage="Excluded repos")]
+        [Alias('x')]
+        [String[]]$Exclude,
         [Parameter(Mandatory=$false,ValueFromPipeline=$true, 
             HelpMessage="If set, this flag will make it so that a root folder will be created (named after the user to clone), under which the repositories will be cloned")]
         [Alias('c')]
@@ -207,9 +211,8 @@ function Sync-UserRepositories {
         [Alias('o')]
         [switch]$OpenAfterDownload,
         [Parameter(Mandatory=$false,ValueFromPipeline=$true, 
-            HelpMessage="Less outputs")]
-        [Alias('q')]
-        [switch]$Quiet
+            HelpMessage="More outputs")]
+        [switch]$ShowGitOutput
     )
 
     try{
@@ -246,10 +249,29 @@ function Sync-UserRepositories {
         $LogFile = New-RandomFilename
 
         # Get all the repositories we want to clone
-        $RepoList = Get-PublicRepositories -Username $Username
-        if(-not $RepoList){
+        $DownloadedRepoList = Get-PublicRepositories -Username $Username
+        if(-not $DownloadedRepoList){
             throw "No repository found for user $Username"
         }
+
+        $RepoList = @()
+        if($Exclude -ne $Null){
+            ForEach($Repo in $DownloadedRepoList){
+                $Name = $Repo.name 
+                $Url = $Repo.clone_url 
+                $Found = $False
+                $IsContained = (($Exclude.Contains($Name)) -Or ($Exclude.Contains($Url)))
+                if($IsContained){
+                    Write-Verbose " name `"$Name`" or `"$Url`" is contained in exclusion list"
+                    continue;
+                }
+             
+                $RepoList += $Repo
+            }  
+        }else{
+            $RepoList = $DownloadedRepoList
+        }
+        
 
         $GitExe = Get-GitExecutablePath
         if(-not(Test-Path $GitExe -PathType Leaf -ErrorAction Ignore)){
@@ -278,10 +300,10 @@ function Sync-UserRepositories {
                 continue;
             }
 
-            if($Quiet){
-                &"$GitExe" 'clone' '--recurse-submodules' '-j8' "$CloneUrl" "$RepoClonePath" *> $LogFile
-            }else{
+            if($ShowGitOutput){
                 &"$GitExe" 'clone' '--recurse-submodules' '-j8' "$CloneUrl" "$RepoClonePath"
+            }else{
+                $Out = &"$GitExe" 'clone' '--recurse-submodules' '-j8' "$CloneUrl" "$RepoClonePath" *> $LogFile
             }  
             [timespan]$ts =  $SyncStopWatch.Elapsed
             $TotalTicks += $ts.Ticks 
