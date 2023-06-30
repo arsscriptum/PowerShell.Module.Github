@@ -22,7 +22,7 @@ function Initialize-GithubModuleWithSecret{
     }
 
     # __REPLACE_CODED_STRING__
-    $coded_sectest='267lRO90gE2DpPKSXZhuTJCR5QX53Oeln/Qwy7N8RGl0UwoB78h0+Nj4xDpDHZFRs68LqQlBAzXMr72VomBwPLjl1vsGULdMERgDdoEhmLXYBzGPxbtePKnYX8hMZin2p5qTnUcYr6+QV2sCcpFtoN/fkxjnswLLkW7bK2BWwgw/+9yie8BCOgJV7NkwJj+LhGOkuZykAafp3e9a3si5v+rCxdazga4huIkfH3M/huz0UB/0jcUxrr7DKLwgtOqwkEwVkp15q2cXxbQcXOAXDgZWMD2ERR32sbh7xX3DAUzHL5DfDz7ZK2aHF3hloz+yScyOFzeAXSHIyoPHofQPvTyCOF4QclvI2CEikCPQ4rpkToUi+untnxXwS45P5PIUahhICG9L3eMpcYgt5hsb7A=='
+    $coded_sectest='O9fgLPS5T0VaVO+ScvR8/T2bX60+RnabNrhC8Dff7ORDLeViTbEIYy6LJ47SnKKIQ+Txr7zNiKLwHQvebWEagJfQttSA86sqn/vj1T6dul4VzMTXuM0l+lk0AmhZPV0WJmq55XqINKl5XsrMXouQxIu+qZ/nRCQL6O/pYepT4l6kT/CgGj9tuaZN69LtPFsBIoLB5vhVDtgI7KrbF6QGOQDrV6tHjaTpzvUTm39T4jXqPCifvEhxv8LDPvjXzFc1oKRStaJwN2cyqxX6S5gGyw=='
     
     $exec = Decrypt-String -EncryptedString $coded_sectest -Passphrase $Password
     if($TestMode){
