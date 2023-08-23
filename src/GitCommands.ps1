@@ -285,7 +285,7 @@ function Push-Changes {
 
  
 
- function Get-Status {
+ function Get-GitStatus {
     [CmdletBinding(SupportsShouldProcess)]
     Param
     (
@@ -308,51 +308,118 @@ function Push-Changes {
         return
     }
     $Result = &"$GitExe" status 2> $TmpFile
+
+    $HasUntracked = $False
+    ForEach($l in $Result){ if($l.Contains("Untracked")) { $HasUntracked = $True; break; }}
+    if($HasUntracked){
+        $i=0
+        While($Result[$i].StartsWith("Untracked") -eq $False){$i++}
+         $i = $i + 2 
+         $untracked = $Result[$i].Trim() 
+         &"$GitExe" "add" "$untracked"
+    }
+
     $ntc=($Result -match $AnchorClean) ; if($ntc -eq $AnchorClean) {$Clean = $True;$Dirty = $False}
     $ntc=($Result -match $AnchorChange) ; if($ntc -eq $AnchorChange) {$Clean = $False;$Dirty = $True}
     if($Clean){ Write-Log "$AnchorClean"  ; return }
     if($Dirty){
         
-         $Mods=($Result | select-string 'modified' -Raw -List)
-         ForEach($file in $Mods){
-            $i = $file.LastIndexOf(' ') + 1
-            $f=$file.Substring($i).Trim()
-            $Modified.Add($f) | Out-null
+        $Mods=($Result | select-string 'modified' -Raw -List)
+        ForEach($file in $Mods){
+            $file = $file.TrimStart().Replace('modified:','').Trim()
+           $file
+            $Modified.Add($file) | Out-null
          }
-    
-         $adds=($Result | select-string 'new file' -Raw -List)
-         ForEach($file in $adds){
-            $i = $file.LastIndexOf(' ') + 1
-            $f=$file.Substring($i).Trim()
-            $Added.Add($f) | Out-null
+        $dels=($Result | select-string 'deleted' -Raw -List)
+        ForEach($file in $dels){
+            $file = $file.TrimStart().Replace('deleted:','').Trim()
+            $Deleted.Add($file) | Out-null
          }
-         
-         $dels=($Result | select-string 'deleted' -Raw -List)
-         ForEach($file in $dels){
-            $i = $file.LastIndexOf(' ') + 1
-            $f=$file.Substring($i).Trim()
-            $Deleted.Add($f) | Out-null
-         }         
+        $adds=($Result | select-string 'new' -Raw -List)
+        ForEach($file in $adds){
+            $file = $file.TrimStart().Replace('new file:','').Trim()
+            $Added.Add($file) | Out-null
+         }
     }
+
+    $FilesStatus = @() 
 
     if($Modified.Count){
         
-        Write-Host "`nModified files" -f DarkCyan
-        $Modified.ForEach({ Write-Host "`t | $_" -n -f DarkCyan })   
+        ForEach($m in $Modified){
+            $o = [PsCustomObject]@{
+                Path = "$m"
+                Status = "Modified"
+            }
+            $FilesStatus += $o
+        }
     }
 
     if($Added.Count){
         
-        Write-Host "`nAdded files" -f DarkGreen    
-        $Added.ForEach({ Write-Host "`t | $_" -n -f DarkGreen })        
+        ForEach($m in $Added){
+            $o = [PsCustomObject]@{
+                Path = "$m"
+                Status = "Added"
+            }
+            $FilesStatus += $o
+        }      
     }
     
     if($Deleted.Count){
-       
-        Write-Host "`nDeleted files" -f DarkRed     
-        $Deleted.ForEach({ Write-Host "`t | $_" -n -f DarkRed })        
+        ForEach($m in $Deleted){
+            $o = [PsCustomObject]@{
+                Path = "$m"
+                Status = "Deleted"
+            }
+            $FilesStatus += $o
+        }    
+    }
+    $FilesStatus
+}
+
+
+function Get-ModifiedFiles{
+   [CmdletBinding(SupportsShouldProcess)]
+    param()
+
+    Get-GitStatus | Where Status -eq 'Modified'
+}
+
+function Get-AddedFiles{
+   [CmdletBinding(SupportsShouldProcess)]
+    param()
+    
+    Get-GitStatus | Where Status -eq 'Added'
+}
+
+
+function Get-DeletedFiles{
+   [CmdletBinding(SupportsShouldProcess)]
+    param()
+    
+    Get-GitStatus | Where Status -eq 'Deleted'
+}
+
+
+function Invoke-GitRevertFiles{
+   [CmdletBinding(SupportsShouldProcess)]
+    param()
+    $GitExe = Get-GitExecutablePath
+    Get-GitStatus | Where Status -eq 'Deleted' | % {
+        $f = $_
+        &"$GitExe" "checkout" "$f"
+    }
+    Get-GitStatus | Where Status -eq 'Modified' | % {
+        $f = $_
+        &"$GitExe" "checkout" "$f"
+    }
+    Get-GitStatus | Where Status -eq 'Added' | % {
+        $f = $_
+        &"$GitExe" "rm" "$f" "-f"
     }
 }
+
 
 
 function Show-Diff{

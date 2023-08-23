@@ -73,6 +73,74 @@ function Get-GithubCloneStats{
 }
 
 
+function Get-GithubRepoTopReferralPaths{
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Mandatory=$true, HelpMessage="Repository")]
+        [ValidateNotNullOrEmpty()]
+        [String]$Repository,
+        [Parameter(Mandatory=$false, HelpMessage="per day/week")]
+        [ValidateSet('day','week')]
+        [String]$Per='day'
+    )   
+ 
+        $UserCredz = Get-GithubUserCredentials
+        $AppCredz  = Get-GithubAppCredentials
+        [String]$Url =  'https://api.github.com/repos/{0}/{1}/traffic/popular/paths' -f ($UserCredz.UserName),$Repository,$Per
+        $AuStr = 'bearer ' + (Get-GithubAccessToken)
+        $Params = @{
+            Uri             = $Url
+    
+            UserAgent       = Get-GithubModuleUserAgent
+            Headers         = @{
+                Authorization = $AuStr
+                "X-GitHub-Api-Version" = "2022-11-28"
+                "Accept" = "application/vnd.github+json" 
+            }
+            Method          = 'GET'
+            UseBasicParsing = $true
+        }      
+
+         $Response = (Invoke-WebRequest  @Params).Content | ConvertFrom-Json  
+         $Response
+         Write-Verbose "Invoke-WebRequest Response: $Response"
+}
+
+
+function Get-GithubRepoTopReferralSources{
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Mandatory=$true, HelpMessage="Repository")]
+        [ValidateNotNullOrEmpty()]
+        [String]$Repository,
+        [Parameter(Mandatory=$false, HelpMessage="per day/week")]
+        [ValidateSet('day','week')]
+        [String]$Per='day'
+    )   
+ 
+        $UserCredz = Get-GithubUserCredentials
+        $AppCredz  = Get-GithubAppCredentials
+        [String]$Url =  'https://api.github.com/repos/{0}/{1}/traffic/popular/referrers' -f ($UserCredz.UserName),$Repository,$Per
+        $AuStr = 'bearer ' + (Get-GithubAccessToken)
+        $Params = @{
+            Uri             = $Url
+    
+            UserAgent       = Get-GithubModuleUserAgent
+            Headers         = @{
+                Authorization = $AuStr
+                "X-GitHub-Api-Version" = "2022-11-28"
+                "Accept" = "application/vnd.github+json" 
+            }
+            Method          = 'GET'
+            UseBasicParsing = $true
+        }      
+
+         $Response = (Invoke-WebRequest  @Params).Content | ConvertFrom-Json  
+         $Response
+         Write-Verbose "Invoke-WebRequest Response: $Response"
+}
+
+
 function Get-GithubRedditSupportStats{
     [CmdletBinding(SupportsShouldProcess)]
         param(
