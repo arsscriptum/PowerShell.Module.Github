@@ -141,46 +141,6 @@ function Get-GithubRepoTopReferralSources{
 }
 
 
-function Get-GithubRedditSupportStats{
-    [CmdletBinding(SupportsShouldProcess)]
-        param(
-        [Parameter(Mandatory=$false, HelpMessage="days")]
-        [int]$Days=30
-    )
-        $d = (Get-Date).AddDays(-$Days)
-        
-        $Time = "{0} - {1}" -f ($d.GetDateTimeFormats()[15]),((Get-Date).GetDateTimeFormats()[15])
-        
-        $SumUniqueClones = 0
-        $TotalClonesCount = 0
-        $c = Get-GithubCloneStats -Repository "PowerShell.Reddit.Support" -Per day
-        $stats = $c.clones | where timestamp -gt $d 
-        $stats | % {
-            $o = $_
-            $SumUniqueClones += $o.uniques
-            $TotalClonesCount += $o.count
-        }
-  
-        $SumUniqueViews = 0
-        $TotalViewsCount = 0
-        $c = Get-GithubRepoViewsStats -Repository "PowerShell.Reddit.Support" -Per day
-        $stats = $c.views | where timestamp -gt $d
-        $stats | % {
-            $o = $_
-            $SumUniqueViews += $o.uniques
-            $TotalViewsCount += $o.count
-        }
-        $UniquesViews = $stats.uniques
-        $ViewsCount = $stats.count
-        $o = [PsCustomObject]@{
-            UniquesViews = $SumUniqueViews
-            ViewsCount = $TotalViewsCount
-            UniquesClones = $SumUniqueClones
-            ClonesCount = $TotalClonesCount
-            Time = $Time
-        }
-        $o | ft
-}
 
 function Save-GithubRepoStats{
     [CmdletBinding(SupportsShouldProcess)]
@@ -198,12 +158,12 @@ function Save-GithubRepoStats{
 
         $d = (Get-Date).AddDays(-1)
 
-        $v = Get-GithubRepoViewsStats -Repository "$Repository" -Per day
+        $v = Get-GithubRepoViewsStats -Repository "$Repository" -Per week
         $stats = $v.views | where timestamp -gt $d
         $UniquesViews = $stats.uniques
         $ViewsCount = $stats.count
         $Timestamp = (Get-Date).GetDateTimeFormats()[26]
-        $c = Get-GithubCloneStats -Repository "$Repository" -Per day
+        $c = Get-GithubCloneStats -Repository "$Repository" -Per week
         $stats = $c.clones | where timestamp -gt $d
         $UniquesClones = $stats.uniques
         $ClonesCount = $stats.count
@@ -267,8 +227,114 @@ function Get-GithubSupportStats{
     [CmdletBinding(SupportsShouldProcess)]
     param()  
     try{
-        GEt-GithubRepoStats -Repository "PowerShell.Reddit.Support"
+        Get-GithubRepoStats -Repository "PowerShell.Reddit.Support"
     }catch{
         Write-Error "$_"
     }
+}
+
+
+function Save-GithubPagesStats{
+    [CmdletBinding(SupportsShouldProcess)]
+    param()  
+    try{
+        Save-GithubRepoStats -Repository "arsscriptum.github.io"
+    }catch{
+        Write-Error "$_"
+    }
+}
+
+
+function Get-GithubPagesStats{
+    [CmdletBinding(SupportsShouldProcess)]
+    param()  
+    try{
+        Get-GithubRepoStats -Repository "arsscriptum.github.io"
+    }catch{
+        Write-Error "$_"
+    }
+}
+
+
+function Get-GithubRedditSupportStats{
+    [CmdletBinding(SupportsShouldProcess)]
+        param(
+        [Parameter(Mandatory=$false, HelpMessage="days")]
+        [int]$Days=30
+    )
+        $d = (Get-Date).AddDays(-$Days)
+        
+        $Time = "{0} - {1}" -f ($d.GetDateTimeFormats()[15]),((Get-Date).GetDateTimeFormats()[15])
+        
+        $SumUniqueClones = 0
+        $TotalClonesCount = 0
+        $c = Get-GithubCloneStats -Repository "PowerShell.Reddit.Support" -Per week
+        $stats = $c.clones | where timestamp -gt $d 
+        $stats | % {
+            $o = $_
+            $SumUniqueClones += $o.uniques
+            $TotalClonesCount += $o.count
+        }
+  
+        $SumUniqueViews = 0
+        $TotalViewsCount = 0
+        $c = Get-GithubRepoViewsStats -Repository "PowerShell.Reddit.Support" -Per week
+        $stats = $c.views | where timestamp -gt $d
+        $stats | % {
+            $o = $_
+            $SumUniqueViews += $o.uniques
+            $TotalViewsCount += $o.count
+        }
+        $UniquesViews = $stats.uniques
+        $ViewsCount = $stats.count
+        $o = [PsCustomObject]@{
+            UniquesViews = $SumUniqueViews
+            ViewsCount = $TotalViewsCount
+            UniquesClones = $SumUniqueClones
+            ClonesCount = $TotalClonesCount
+            Time = $Time
+        }
+        $o | ft
+}
+
+
+function Get-GithubPagesStats{
+    [CmdletBinding(SupportsShouldProcess)]
+        param(
+        [Parameter(Mandatory=$false, HelpMessage="days")]
+        [int]$Days=30
+    )
+        $d = (Get-Date).AddDays(-$Days)
+        
+        $Time = "{0} - {1}" -f ($d.GetDateTimeFormats()[15]),((Get-Date).GetDateTimeFormats()[15])
+        
+        $SumUniqueClones = 0
+        $TotalClonesCount = 0
+        $c = Get-GithubCloneStats -Repository "arsscriptum.github.io" -Per week
+        $stats = $c.clones | where timestamp -gt $d 
+        $stats | % {
+            $o = $_
+            $SumUniqueClones += $o.uniques
+            $TotalClonesCount += $o.count
+        }
+  
+        $SumUniqueViews = 0
+        $TotalViewsCount = 0
+        $c = Get-GithubRepoViewsStats -Repository "arsscriptum.github.io" -Per week
+        $stats = $c.views | where timestamp -gt $d
+        $stats | % {
+            $o = $_
+            $SumUniqueViews += $o.uniques
+            $TotalViewsCount += $o.count
+        }
+        $UniquesViews = $stats.uniques
+        $ViewsCount = $stats.count
+        $o = [PsCustomObject]@{
+            UniquesViews = $SumUniqueViews
+            ViewsCount = $TotalViewsCount
+            UniquesClones = $SumUniqueClones
+            ClonesCount = $TotalClonesCount
+            Time = $Time
+        }
+        $o | ft
 }
