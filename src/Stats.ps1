@@ -86,7 +86,7 @@ function Get-GithubRepoTopReferralPaths{
  
         $UserCredz = Get-GithubUserCredentials
         $AppCredz  = Get-GithubAppCredentials
-        [String]$Url =  'https://api.github.com/repos/{0}/{1}/traffic/popular/paths' -f ($UserCredz.UserName),$Repository,$Per
+        [String]$Url =  'https://api.github.com/repos/{0}/{1}/traffic/popular/paths?Per={2}' -f ($UserCredz.UserName),$Repository,$Per
         $AuStr = 'bearer ' + (Get-GithubAccessToken)
         $Params = @{
             Uri             = $Url
@@ -163,7 +163,7 @@ function Save-GithubRepoStats{
         $UniquesViews = $stats.uniques
         $ViewsCount = $stats.count
         $Timestamp = (Get-Date).GetDateTimeFormats()[26]
-        $c = Get-GithubCloneStats -Repository "$Repository" -Per week
+        $c = Get-GithubCloneStats -Repository "$Repository" -Per day
         $stats = $c.clones | where timestamp -gt $d
         $UniquesClones = $stats.uniques
         $ClonesCount = $stats.count
