@@ -18,10 +18,16 @@ function Start-SaveStatsJob{
 
             $LastUpdateTime= Get-Date
             while($True){
+                Start-Sleep 5
                 [timespan]$Diff = (Get-Date) - $LastUpdateTime
                 if($Diff.Minutes -gt 20){
                     $LastUpdateTime = Get-Date
                     Save-GithubSupportStats 
+                    Save-GithubPagesStats
+                    $pub = Get-PublicRepositories -Username "arsscriptum" | Select -ExpandProperty name
+                    ForEach($p in $pub){
+                        Save-GithubRepoStats -Repository "$p"
+                    }
                 }
             }
         }catch{

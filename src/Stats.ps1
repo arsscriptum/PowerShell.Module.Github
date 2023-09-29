@@ -206,7 +206,7 @@ function Get-GithubRepoStats{
         }
 
         $Stats = Get-Content -Path $Path | ConvertFrom-Json
-        $Stats | ft
+        $Stats
     }catch{
         Write-Error "$_"
     }
