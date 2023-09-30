@@ -158,22 +158,24 @@ function Save-GithubRepoStats{
 
         $d = (Get-Date).AddDays(-1)
 
-        $v = Get-GithubRepoViewsStats -Repository "$Repository" -Per week
-        $stats = $v.views | where timestamp -gt $d
-        $UniquesViews = $stats.uniques
-        $ViewsCount = $stats.count
-        $Timestamp = (Get-Date).GetDateTimeFormats()[26]
-        $c = Get-GithubCloneStats -Repository "$Repository" -Per day
-        $stats = $c.clones | where timestamp -gt $d
-        $UniquesClones = $stats.uniques
-        $ClonesCount = $stats.count
-        
-        $o = [PsCustomObject]@{
-            UniquesViews = $UniquesViews
-            ViewsCount = $ViewsCount
-            UniquesClones = $UniquesClones
-            ClonesCount = $ClonesCount
-            Timestamp = $Timestamp
+        $views_stats = Get-GithubRepoViewsStats -Repository "$Repository" -Per week | Select  -ExpandProperty views 
+        $clone_stats = Get-GithubCloneStats -Repository "$Repository" -Per week | Select  -ExpandProperty clones 
+        [uint32]$UniquesViewsSum = $views_stats | Select -ExpandProperty uniques |  Measure-Object -Sum | Select  -ExpandProperty Sum
+        [uint32]$ViewsCountSum = $views_stats | Select -ExpandProperty count |  Measure-Object -Sum | Select  -ExpandProperty Sum
+        [uint32]$UniquesClonesSum = $clone_stats | Select -ExpandProperty uniques | Measure-Object -Sum  | Select  -ExpandProperty Sum
+        [uint32]$ClonesCountSum = $clone_stats | Select -ExpandProperty count | Measure-Object -Sum  | Select  -ExpandProperty Sum
+        [uint32]$views_stats_entries =  $views_stats | Measure-Object  | Select  -ExpandProperty count
+        [uint32]$clone_stats_entries =  $clone_stats | Measure-Object  | Select  -ExpandProperty count
+        $DateStr = (Get-Date)
+        [pscustomobject]$o = [pscustomobject]@{
+            UniquesViews = $UniquesViewsSum
+            ViewsCount = $ViewsCountSum
+            UniquesClones  = $UniquesClonesSum
+            ClonesCount  = $ClonesCountSum
+            ClonesEntries = $clone_stats_entries
+            ViewsEntries = $views_stats_entries
+            Repository = "$Repository"
+            SampleDate = "$DateStr"
         }
         
         if($NewFile){
@@ -197,7 +199,9 @@ function Get-GithubRepoStats{
     param(
         [Parameter(Mandatory=$true, HelpMessage="Repository")]
         [ValidateNotNullOrEmpty()]
-        [String]$Repository
+        [String]$Repository,
+        [Parameter(Mandatory=$false)]
+        [int]$Sample=-1
     )     
     try{
         $Path = '{0}\STATS-{1}.{2}' -f (Get-StatsPath), $Repository, "json"
@@ -206,7 +210,12 @@ function Get-GithubRepoStats{
         }
 
         $Stats = Get-Content -Path $Path | ConvertFrom-Json
-        $Stats
+        if($Sample -lt 0){
+            $RetStats = $Stats[($Stats.Count) + $Sample]
+        }else{
+            $RetStats = $Stats[$Sample]
+        }
+        $RetStats
     }catch{
         Write-Error "$_"
     }
@@ -338,3 +347,89 @@ function Get-GithubPagesStats{
         }
         $o | ft
 }
+
+
+
+function Get-GithubSavedStats{
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Mandatory=$false)]
+        [int]$Sample=-1
+    )
+        try{
+            $LastUpdateTime= Get-Date
+            [System.Collections.ArrayList]$data = [System.Collections.ArrayList]::new()
+            $pub = Get-PublicRepositories -Username "arsscriptum" | Select -ExpandProperty name
+            ForEach($p in $pub){
+                $stats = get-GithubRepoStats -Repository "$p" -Sample $Sample
+               
+                [uint32]$UniquesViewsSum = $stats | Select -ExpandProperty UniquesViews
+                [uint32]$ViewsCountSum =  $stats | Select -ExpandProperty ViewsCount
+                [uint32]$UniquesClonesSum =  $stats | Select -ExpandProperty UniquesClones
+                [uint32]$ClonesCountSum =  $stats | Select -ExpandProperty ClonesCount
+                [uint32]$ClonesEntries =   $stats | Select -ExpandProperty ClonesEntries
+                [uint32]$ViewsEntries =   $stats | Select -ExpandProperty ViewsEntries
+                $SampleDate =   $stats | Select -ExpandProperty SampleDate
+                    [pscustomobject]$new = [pscustomobject]@{
+                        UniquesViews = $UniquesViewsSum
+                        ViewsCount = $ViewsCountSum
+                        UniquesClones  = $UniquesClonesSum
+                        ClonesCount  = $ClonesCountSum
+                        ViewsEntries = $ViewsEntries
+                        ClonesEntries = $ClonesEntries
+                        Repository = "$p"
+                        SampleDate = "$SampleDate"
+                    }
+                    [void]$data.Add($new)
+            }
+                
+            $data
+        }catch{
+            Write-Output "$_"
+    }
+}
+
+
+
+function Update-GithubSavedStats{
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+        try{
+            
+            $pub = Get-PublicRepositories -Username "arsscriptum" | Select -ExpandProperty name
+            $count = $pub.Count
+            $index = 1
+            $status =  "Updating Stats {0}%" -f 1
+            Write-Progress -Activity "STATS" -Status $status -PercentComplete 1
+            ForEach($p in $pub){
+                $index++
+                $raw_percentage = ($index/$count)*100
+                $percentage = [math]::Round($raw_percentage)
+                if($percentage -gt 100){$percentage = 100}
+                $status =  "Updating `"$p`""
+                $statuslen = $status.Length
+                $status = Get-PaddedString -String $status -Size 45
+                $status = "{0} {1}%" -f $status,$percentage
+                Write-Progress -Activity "STATS" -Status $status -PercentComplete $percentage
+                Save-GithubRepoStats -Repository "$p"
+            }
+            Write-Progress -Activity "STATS" -Completed
+            Get-GithubSavedStats
+        }catch{
+            Write-Output "$_"
+    }
+}
+
+
+
+function Get-GithubAllSavedStats{
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+        try{
+            
+            Get-GithubSavedStats | sort -Property UniquesClones -Descending | Select Repository,UniquesClones,UniquesViews,SampleDate
+        }catch{
+            Write-Output "$_"
+    }
+}
+

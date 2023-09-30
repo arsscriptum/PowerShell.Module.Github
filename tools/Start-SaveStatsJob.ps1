@@ -14,20 +14,16 @@ function Start-SaveStatsJob{
           param()
       
         Import-Module 'PowerShell.Module.Github'
+
         try{
 
             $LastUpdateTime= Get-Date
             while($True){
+                
                 Start-Sleep 5
                 [timespan]$Diff = (Get-Date) - $LastUpdateTime
-                if($Diff.Minutes -gt 20){
-                    $LastUpdateTime = Get-Date
-                    Save-GithubSupportStats 
-                    Save-GithubPagesStats
-                    $pub = Get-PublicRepositories -Username "arsscriptum" | Select -ExpandProperty name
-                    ForEach($p in $pub){
-                        Save-GithubRepoStats -Repository "$p"
-                    }
+                if($Diff.Minutes -gt 120){
+                    Update-GithubSavedStats
                 }
             }
         }catch{
@@ -41,4 +37,5 @@ function Start-SaveStatsJob{
     $jobby
 }
 
-Start-SaveStatsJob
+
+
