@@ -4,7 +4,7 @@
 #>
 
 
-function Get-GithubRepoViewsStats{
+function Get-GhStatsViews{
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$true, HelpMessage="Repository")]
@@ -25,7 +25,7 @@ function Get-GithubRepoViewsStats{
             UserAgent       = Get-GithubModuleUserAgent
             Headers         = @{
                 Authorization = $AuStr
-                "X-GitHub-Api-Version" = "2022-11-28"
+                "X-GhStats-Api-Version" = "2022-11-28"
                 "Accept" = "application/vnd.github+json" 
             }
             Method          = 'GET'
@@ -39,7 +39,7 @@ function Get-GithubRepoViewsStats{
 
 
 
-function Get-GithubCloneStats{
+function Get-GhStatsClones{
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$true, HelpMessage="Repository")]
@@ -60,7 +60,7 @@ function Get-GithubCloneStats{
             UserAgent       = Get-GithubModuleUserAgent
             Headers         = @{
                 Authorization = $AuStr
-                "X-GitHub-Api-Version" = "2022-11-28"
+                "X-GhStats-Api-Version" = "2022-11-28"
                 "Accept" = "application/vnd.github+json" 
             }
             Method          = 'GET'
@@ -73,7 +73,7 @@ function Get-GithubCloneStats{
 }
 
 
-function Get-GithubRepoTopReferralPaths{
+function Get-GhStatsMostPopular{
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$true, HelpMessage="Repository")]
@@ -94,7 +94,7 @@ function Get-GithubRepoTopReferralPaths{
             UserAgent       = Get-GithubModuleUserAgent
             Headers         = @{
                 Authorization = $AuStr
-                "X-GitHub-Api-Version" = "2022-11-28"
+                "X-GhStats-Api-Version" = "2022-11-28"
                 "Accept" = "application/vnd.github+json" 
             }
             Method          = 'GET'
@@ -107,7 +107,7 @@ function Get-GithubRepoTopReferralPaths{
 }
 
 
-function Get-GithubRepoTopReferralSources{
+function Get-GhStatsTopReferrals{
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$true, HelpMessage="Repository")]
@@ -128,7 +128,7 @@ function Get-GithubRepoTopReferralSources{
             UserAgent       = Get-GithubModuleUserAgent
             Headers         = @{
                 Authorization = $AuStr
-                "X-GitHub-Api-Version" = "2022-11-28"
+                "X-GhStats-Api-Version" = "2022-11-28"
                 "Accept" = "application/vnd.github+json" 
             }
             Method          = 'GET'
@@ -142,7 +142,7 @@ function Get-GithubRepoTopReferralSources{
 
 
 
-function Save-GithubRepoStats{
+function Save-GhStatsRepository{
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$true, HelpMessage="Repository")]
@@ -158,8 +158,8 @@ function Save-GithubRepoStats{
 
         $d = (Get-Date).AddDays(-1)
 
-        $views_stats = Get-GithubRepoViewsStats -Repository "$Repository" -Per week | Select  -ExpandProperty views 
-        $clone_stats = Get-GithubCloneStats -Repository "$Repository" -Per week | Select  -ExpandProperty clones 
+        $views_stats = Get-GhStatsViews -Repository "$Repository" -Per week | Select  -ExpandProperty views 
+        $clone_stats = Get-GhStatsClones -Repository "$Repository" -Per week | Select  -ExpandProperty clones 
         [uint32]$UniquesViewsSum = $views_stats | Select -ExpandProperty uniques |  Measure-Object -Sum | Select  -ExpandProperty Sum
         [uint32]$ViewsCountSum = $views_stats | Select -ExpandProperty count |  Measure-Object -Sum | Select  -ExpandProperty Sum
         [uint32]$UniquesClonesSum = $clone_stats | Select -ExpandProperty uniques | Measure-Object -Sum  | Select  -ExpandProperty Sum
@@ -195,7 +195,7 @@ function Save-GithubRepoStats{
 }
 
 
-function Get-GithubRepoStatsCount{
+function Get-GhStatsRepositoryCount{
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$true, HelpMessage="Repository")]
@@ -207,7 +207,6 @@ function Get-GithubRepoStatsCount{
         if(!(Test-Path $Path)){
             throw "no file $Path"
         }
-
         $Stats = Get-Content -Path $Path | ConvertFrom-Json
         
         [int]$StatsCount = $Stats.Count
@@ -218,7 +217,7 @@ function Get-GithubRepoStatsCount{
 }
 
 
-function Get-GithubRepoStats{
+function Get-GhStatsRepository{
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$true, HelpMessage="Repository")]
@@ -245,51 +244,51 @@ function Get-GithubRepoStats{
     }
 }
 
-function Save-GithubSupportStats{
+function Save-GhStatsRedditSupport{
     [CmdletBinding(SupportsShouldProcess)]
     param()  
     try{
-        Save-GithubRepoStats -Repository "PowerShell.Reddit.Support"
+        Save-GhStatsRepository -Repository "PowerShell.Reddit.Support"
     }catch{
         Write-Error "$_"
     }
 }
 
 
-function Get-GithubSupportStats{
+function Get-GhStatsRedditSupport{
     [CmdletBinding(SupportsShouldProcess)]
     param()  
     try{
-        Get-GithubRepoStats -Repository "PowerShell.Reddit.Support"
+        Get-GhStatsRepository -Repository "PowerShell.Reddit.Support"
     }catch{
         Write-Error "$_"
     }
 }
 
 
-function Save-GithubPagesStats{
+function Save-GhStatsArsScriptum{
     [CmdletBinding(SupportsShouldProcess)]
     param()  
     try{
-        Save-GithubRepoStats -Repository "arsscriptum.github.io"
+        Save-GhStatsRepository -Repository "arsscriptum.github.io"
     }catch{
         Write-Error "$_"
     }
 }
 
 
-function Get-GithubPagesStats{
+function Get-GhStatsArsScriptum{
     [CmdletBinding(SupportsShouldProcess)]
     param()  
     try{
-        Get-GithubRepoStats -Repository "arsscriptum.github.io"
+        Get-GhStatsRepository -Repository "arsscriptum.github.io"
     }catch{
         Write-Error "$_"
     }
 }
 
 
-function Get-GithubRedditSupportStats{
+function Get-GhStatsRedditSupport{
     [CmdletBinding(SupportsShouldProcess)]
         param(
         [Parameter(Mandatory=$false, HelpMessage="days")]
@@ -301,7 +300,7 @@ function Get-GithubRedditSupportStats{
         
         $SumUniqueClones = 0
         $TotalClonesCount = 0
-        $c = Get-GithubCloneStats -Repository "PowerShell.Reddit.Support" -Per week
+        $c = Get-GhStatsClones -Repository "PowerShell.Reddit.Support" -Per week
         $stats = $c.clones | where timestamp -gt $d 
         $stats | % {
             $o = $_
@@ -311,7 +310,7 @@ function Get-GithubRedditSupportStats{
   
         $SumUniqueViews = 0
         $TotalViewsCount = 0
-        $c = Get-GithubRepoViewsStats -Repository "PowerShell.Reddit.Support" -Per week
+        $c = Get-GhStatsViews -Repository "PowerShell.Reddit.Support" -Per week
         $stats = $c.views | where timestamp -gt $d
         $stats | % {
             $o = $_
@@ -331,7 +330,7 @@ function Get-GithubRedditSupportStats{
 }
 
 
-function Get-GithubPagesStats{
+function Get-GhStatsArsScriptum{
     [CmdletBinding(SupportsShouldProcess)]
         param(
         [Parameter(Mandatory=$false, HelpMessage="days")]
@@ -343,7 +342,7 @@ function Get-GithubPagesStats{
         
         $SumUniqueClones = 0
         $TotalClonesCount = 0
-        $c = Get-GithubCloneStats -Repository "arsscriptum.github.io" -Per week
+        $c = Get-GhStatsClones -Repository "arsscriptum.github.io" -Per week
         $stats = $c.clones | where timestamp -gt $d 
         $stats | % {
             $o = $_
@@ -353,7 +352,7 @@ function Get-GithubPagesStats{
   
         $SumUniqueViews = 0
         $TotalViewsCount = 0
-        $c = Get-GithubRepoViewsStats -Repository "arsscriptum.github.io" -Per week
+        $c = Get-GhStatsViews -Repository "arsscriptum.github.io" -Per week
         $stats = $c.views | where timestamp -gt $d
         $stats | % {
             $o = $_
@@ -374,7 +373,7 @@ function Get-GithubPagesStats{
 
 
 
-function Get-GithubSavedStats{
+function Get-GhSavedStats{
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$false)]
@@ -393,7 +392,7 @@ function Get-GithubSavedStats{
             [System.Collections.ArrayList]$data = [System.Collections.ArrayList]::new()
             
             ForEach($p in $pub){
-                $stats = get-GithubRepoStats -Repository "$p" -Sample $Sample
+                $stats = get-GhStatsRepository -Repository "$p" -Sample $Sample
                
                 [uint32]$UniquesViewsSum = $stats | Select -ExpandProperty UniquesViews
                 [uint32]$ViewsCountSum =  $stats | Select -ExpandProperty ViewsCount
@@ -423,7 +422,7 @@ function Get-GithubSavedStats{
 
 
 
-function Update-GithubSavedStats{
+function Update-GhSavedStats{
     [CmdletBinding(SupportsShouldProcess)]
     param()
         try{
@@ -443,10 +442,10 @@ function Update-GithubSavedStats{
                 $status = Get-PaddedString -String $status -Size 45
                 $status = "{0} {1}%" -f $status,$percentage
                 Write-Progress -Activity "STATS" -Status $status -PercentComplete $percentage
-                Save-GithubRepoStats -Repository "$p"
+                Save-GhStatsRepository -Repository "$p"
             }
             Write-Progress -Activity "STATS" -Completed
-            Get-GithubSavedStats
+            Get-GhSavedStats
         }catch{
             Write-Output "$_"
     }
@@ -454,12 +453,12 @@ function Update-GithubSavedStats{
 
 
 
-function Get-GithubPublicReposSavedStats{
+function Get-GhSavedStatsSorted{
     [CmdletBinding(SupportsShouldProcess)]
     param()
         try{
             
-            Get-GithubSavedStats | sort -Property UniquesClones -Descending | Select Repository,UniquesClones,UniquesViews,SampleDate
+            Get-GhSavedStats | sort -Property UniquesClones -Descending | Select Repository,UniquesClones,UniquesViews,SampleDate
         }catch{
             Write-Output "$_"
     }
@@ -467,7 +466,7 @@ function Get-GithubPublicReposSavedStats{
 
 
 
-function Get-GithubAllSavedStatsSamples{
+function Get-GhSavedStatsAllSamples{
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$true, HelpMessage="Repository")]
@@ -476,9 +475,9 @@ function Get-GithubAllSavedStatsSamples{
     )  
         try{
             [System.Collections.ArrayList]$data = [System.Collections.ArrayList]::new()
-            $GithubSavedStatsCount = Get-GithubRepoStatsCount -Repository "$Repository"
+            $GithubSavedStatsCount = Get-GhStatsRepositoryCount -Repository "$Repository"
             For($i = 0 ; $i -lt $GithubSavedStatsCount ; $i++){
-                $stats = Get-GithubRepoStats -Repository "$Repository" -Sample $i
+                $stats = Get-GhStatsRepository -Repository "$Repository" -Sample $i
                 [void]$data.Add($stats)
             }
             $data

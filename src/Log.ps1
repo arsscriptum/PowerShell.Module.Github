@@ -18,7 +18,7 @@ class LogConfigurationGitHub
     [ConsoleColor]$ErrorDescriptionColor = 'DarkYellow'
 }
 
-function Get-LogConfig {
+function Get-LogConfig {    # NOEXPORT
     param(
     )
     if($Script:LogConfig -eq $Null){

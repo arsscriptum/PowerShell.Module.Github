@@ -31,7 +31,7 @@ function Start-SaveStatsJob{
                     $LastUpdateTime = (Get-Date)
                     $StrDate = (Get-Date)
                     Write-Host "[Update] num $id started on $StrDate"
-                    $Null = Update-GithubSavedStats
+                    $Null = Update-GhSavedStats
                     $StrDate = (Get-Date)
                     Write-Host "[Update] num $id ended on $StrDate"
                     $id++
