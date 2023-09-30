@@ -211,6 +211,7 @@ function Get-GithubRepoStatsCount{
         $Stats = Get-Content -Path $Path | ConvertFrom-Json
         
         [int]$StatsCount = $Stats.Count
+        $StatsCount
     }catch{
         Write-Error "$_"
     }
@@ -377,12 +378,20 @@ function Get-GithubSavedStats{
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory=$false)]
+        [String]$Repository,
+        [Parameter(Mandatory=$false)]
         [int]$Sample=-1
     )
         try{
+            $pub = @()
+            if([string]::IsNullOrEmpty($Repository) -eq $False){
+                $pub = Get-PublicRepositories -Username "arsscriptum" | Where name -eq "$Repository" | Select -ExpandProperty name
+            }else{
+                $pub = Get-PublicRepositories -Username "arsscriptum" | Select -ExpandProperty name
+            }
             $LastUpdateTime= Get-Date
             [System.Collections.ArrayList]$data = [System.Collections.ArrayList]::new()
-            $pub = Get-PublicRepositories -Username "arsscriptum" | Select -ExpandProperty name
+            
             ForEach($p in $pub){
                 $stats = get-GithubRepoStats -Repository "$p" -Sample $Sample
                
@@ -445,12 +454,34 @@ function Update-GithubSavedStats{
 
 
 
-function Get-GithubAllSavedStats{
+function Get-GithubPublicReposSavedStats{
     [CmdletBinding(SupportsShouldProcess)]
     param()
         try{
             
             Get-GithubSavedStats | sort -Property UniquesClones -Descending | Select Repository,UniquesClones,UniquesViews,SampleDate
+        }catch{
+            Write-Output "$_"
+    }
+}
+
+
+
+function Get-GithubAllSavedStatsSamples{
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Mandatory=$true, HelpMessage="Repository")]
+        [ValidateNotNullOrEmpty()]
+        [String]$Repository
+    )  
+        try{
+            [System.Collections.ArrayList]$data = [System.Collections.ArrayList]::new()
+            $GithubSavedStatsCount = Get-GithubRepoStatsCount -Repository "$Repository"
+            For($i = 0 ; $i -lt $GithubSavedStatsCount ; $i++){
+                $stats = Get-GithubRepoStats -Repository "$Repository" -Sample $i
+                [void]$data.Add($stats)
+            }
+            $data
         }catch{
             Write-Output "$_"
     }
