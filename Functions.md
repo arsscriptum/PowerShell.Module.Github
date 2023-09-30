@@ -1,5 +1,7 @@
 
+### Config
 
+***Functions for Config***
 
 |  **Function**                       |  **Source**           |
 |-------------------------------------|-----------------------|
@@ -8,7 +10,9 @@
 | [Get-GithubModuleInformation](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Get-GithubModuleInformation.md)         | [Config.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/Config.ps1)         |
 | [Get-StatsPath](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Get-StatsPath.md)                       | [Config.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/Config.ps1)                       |
 
+### ConfigGetters
 
+***Functions for ConfigGetters***
 
 |  **Function**                               |  **Source**     |
 |---------------------------------------------|-----------------|
@@ -17,14 +21,18 @@
 | [Get-GithubAccessToken](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Get-GithubAccessToken.md)                       | [ConfigGetters.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/ConfigGetters.ps1)                       |
 | [Get-GitExecutablePath](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Get-GitExecutablePath.md)                       | [ConfigGetters.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/ConfigGetters.ps1)                       |
 
+### GhAuthentication
 
+***Functions for GhAuthentication***
 
 |  **Function**                                   |  **Source**        |
 |-------------------------------------------------|--------------------|
 | [Invoke-SetupGitAuthentication](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Invoke-SetupGitAuthentication.md)                   | [GhAuthentication.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/GhAuthentication.ps1)                   |
 | [Get-GithubAuthenticationStatus](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Get-GithubAuthenticationStatus.md)                  | [GhAuthentication.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/GhAuthentication.ps1)                  |
 
+### GhCommands
 
+***Functions for GhCommands***
 
 |  **Function**                                           |  **Source**             |
 |---------------------------------------------------------|-------------------------|
@@ -33,7 +41,9 @@
 | [New-Repository](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/New-Repository.md)                                          | [GhCommands.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/GhCommands.ps1)                                          |
 | [Remove-Repository](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Remove-Repository.md)                                       | [GhCommands.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/GhCommands.ps1)                                       |
 
+### GhInstall
 
+***Functions for GhInstall***
 
 |  **Function**                                                 |  **Source**                   |
 |---------------------------------------------------------------|-------------------------------|
@@ -41,7 +51,9 @@
 | [Test-GhCliInstallation](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Test-GhCliInstallation.md)                                        | [GhInstall.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/GhInstall.ps1)                                        |
 | [Get-GhCliExePath](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Get-GhCliExePath.md)                                              | [GhInstall.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/GhInstall.ps1)                                              |
 
+### GitCommands
 
+***Functions for GitCommands***
 
 |  **Function**                                                                         |  **Source**                                           |
 |---------------------------------------------------------------------------------------|-------------------------------------------------------|
@@ -58,7 +70,9 @@
 | [Push-Changes](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Push-Changes.md)                                                                          | [GitCommands.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/GitCommands.ps1)                                                                          |
 | [Invoke-CloneRepository](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Invoke-CloneRepository.md)                                                                | [GitCommands.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/GitCommands.ps1)                                                                |
 
+### Initialize
 
+***Functions for Initialize***
 
 |  **Function**                                                                               |  **Source**                                                 |
 |---------------------------------------------------------------------------------------------|-------------------------------------------------------------|
@@ -66,13 +80,17 @@
 | [Initialize-GithubModule](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Initialize-GithubModule.md)                                                                     | [Initialize.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/Initialize.ps1)                                                                     |
 | [Initialize-GithubModuleWithSecret](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Initialize-GithubModuleWithSecret.md)                                                           | [Initialize.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/Initialize.ps1)                                                           |
 
+### InstallGhClient
 
+***Functions for InstallGhClient***
 
 |  **Function**                                                                                 |  **Source**                                                   |
 |-----------------------------------------------------------------------------------------------|---------------------------------------------------------------|
 | [Invoke-InstallGhClient](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Invoke-InstallGhClient.md)                                                                        | [InstallGhClient.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/InstallGhClient.ps1)                                                                        |
 
+### Stats
 
+***Functions for Stats***
 
 |  **Function**                                                                                                                   |  **Source**                                                                                     |
 |---------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
@@ -94,14 +112,18 @@
 | [Get-GhStatsViews](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Get-GhStatsViews.md)                                                                                                                | [Stats.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/Stats.ps1)                                                                                                                |
 | [Get-GhStatsRedditSupport](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Get-GhStatsRedditSupport.md)                                                                                                        | [Stats.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/Stats.ps1)                                                                                                        |
 
+### WebApiCommands
 
+***Functions for WebApiCommands***
 
 |  **Function**                                                                                                                       |  **Source**                                                                                         |
 |-------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
 | Invoke-AutoUpdateProgress                                                                                                           | [WebApiCommands.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/WebApiCommands.ps1)                                                                                                           |
 | [Sync-UserRepositories](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Sync-UserRepositories.md)                                                                                                               | [WebApiCommands.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/WebApiCommands.ps1)                                                                                                               |
 
+### WebApiCommandsList
 
+***Functions for WebApiCommandsList***
 
 |  **Function**                                                                                                                               |  **Source**                                                                                                 |
 |---------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
