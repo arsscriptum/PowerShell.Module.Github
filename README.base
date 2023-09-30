@@ -1,0 +1,22 @@
+!!! ==============================================================================
+!!!                                   IMPORTANT
+!!! This file is the README file that should be edited when changing README.md
+!!! README.md is generated from this file. After changes, use UpdateREADME.ps1 
+!!! Don't bother for these lines
+!!! ==============================================================================
+
+# PowerShell.Module.Github
+
+## Overview
+
+This module implements general tooling for my Powershell environment. Largely built from scratch, with references from some quality coding resources, it provides world-class support for application development, systems administration and general functionalities.
+
+## Compilation
+
+You need the [PowerShell.ModuleBuilder](https://github.com/arsscriptum/PowerShell.ModuleBuilder) to compile this module.
+
+## Documentation
+
+View [generated documentation](https://github.com/arsscriptum/PowerShell.Module.Github/tree/master/doc)
+
+## View Functions list
