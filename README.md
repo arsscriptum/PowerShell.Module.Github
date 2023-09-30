@@ -15,7 +15,6 @@ View [generated documentation](https://github.com/arsscriptum/PowerShell.Module.
 ## View Functions list
 
 
-Functions for Config
 
 |  **Function**                       |  **Source**           |
 |-------------------------------------|-----------------------|
@@ -25,7 +24,6 @@ Functions for Config
 | [Get-StatsPath](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Get-StatsPath.md)                       | [Config.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/Config.ps1)                       |
 
 
-Functions for ConfigGetters
 
 |  **Function**                               |  **Source**     |
 |---------------------------------------------|-----------------|
@@ -35,7 +33,6 @@ Functions for ConfigGetters
 | [Get-GitExecutablePath](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Get-GitExecutablePath.md)                       | [ConfigGetters.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/ConfigGetters.ps1)                       |
 
 
-Functions for GhAuthentication
 
 |  **Function**                                   |  **Source**        |
 |-------------------------------------------------|--------------------|
@@ -43,7 +40,6 @@ Functions for GhAuthentication
 | [Get-GithubAuthenticationStatus](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Get-GithubAuthenticationStatus.md)                  | [GhAuthentication.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/GhAuthentication.ps1)                  |
 
 
-Functions for GhCommands
 
 |  **Function**                                           |  **Source**             |
 |---------------------------------------------------------|-------------------------|
@@ -53,7 +49,6 @@ Functions for GhCommands
 | [Remove-Repository](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Remove-Repository.md)                                       | [GhCommands.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/GhCommands.ps1)                                       |
 
 
-Functions for GhInstall
 
 |  **Function**                                                 |  **Source**                   |
 |---------------------------------------------------------------|-------------------------------|
@@ -62,7 +57,6 @@ Functions for GhInstall
 | [Get-GhCliExePath](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Get-GhCliExePath.md)                                              | [GhInstall.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/GhInstall.ps1)                                              |
 
 
-Functions for GitCommands
 
 |  **Function**                                                                         |  **Source**                                           |
 |---------------------------------------------------------------------------------------|-------------------------------------------------------|
@@ -80,7 +74,6 @@ Functions for GitCommands
 | [Invoke-CloneRepository](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Invoke-CloneRepository.md)                                                                | [GitCommands.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/GitCommands.ps1)                                                                |
 
 
-Functions for Initialize
 
 |  **Function**                                                                               |  **Source**                                                 |
 |---------------------------------------------------------------------------------------------|-------------------------------------------------------------|
@@ -89,14 +82,12 @@ Functions for Initialize
 | [Initialize-GithubModuleWithSecret](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Initialize-GithubModuleWithSecret.md)                                                           | [Initialize.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/Initialize.ps1)                                                           |
 
 
-Functions for InstallGhClient
 
 |  **Function**                                                                                 |  **Source**                                                   |
 |-----------------------------------------------------------------------------------------------|---------------------------------------------------------------|
 | [Invoke-InstallGhClient](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Invoke-InstallGhClient.md)                                                                        | [InstallGhClient.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/InstallGhClient.ps1)                                                                        |
 
 
-Functions for Stats
 
 |  **Function**                                                                                                                   |  **Source**                                                                                     |
 |---------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
@@ -119,7 +110,6 @@ Functions for Stats
 | [Get-GhStatsRedditSupport](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Get-GhStatsRedditSupport.md)                                                                                                        | [Stats.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/Stats.ps1)                                                                                                        |
 
 
-Functions for WebApiCommands
 
 |  **Function**                                                                                                                       |  **Source**                                                                                         |
 |-------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
@@ -127,7 +117,6 @@ Functions for WebApiCommands
 | [Sync-UserRepositories](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/doc/Sync-UserRepositories.md)                                                                                                               | [WebApiCommands.ps1](https://github.com/arsscriptum/PowerShell.Module.Github/blob/master/src/WebApiCommands.ps1)                                                                                                               |
 
 
-Functions for WebApiCommandsList
 
 |  **Function**                                                                                                                               |  **Source**                                                                                                 |
 |---------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
