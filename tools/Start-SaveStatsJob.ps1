@@ -21,13 +21,13 @@ function Start-SaveStatsJob{
             $LastUpdateTime = (Get-Date)
             if($First -eq $True){
                 $First = $False
-                $LastUpdateTime = (Get-Date).AddMinutes(-10)
+                $LastUpdateTime = (Get-Date).AddMinutes(-50)
             }
             while($True){
                 
                 Start-Sleep 5
                 [timespan]$Diff = (Get-Date) - $LastUpdateTime
-                if($Diff.Minutes -gt 5){
+                if($Diff.Minutes -gt 30){
                     $LastUpdateTime = (Get-Date)
                     $StrDate = (Get-Date)
                     Write-Host "[Update] num $id started on $StrDate"
