@@ -194,6 +194,29 @@ function Save-GithubRepoStats{
     }
 }
 
+
+function Get-GithubRepoStatsCount{
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Mandatory=$true, HelpMessage="Repository")]
+        [ValidateNotNullOrEmpty()]
+        [String]$Repository
+    )     
+    try{
+        $Path = '{0}\STATS-{1}.{2}' -f (Get-StatsPath), $Repository, "json"
+        if(!(Test-Path $Path)){
+            throw "no file $Path"
+        }
+
+        $Stats = Get-Content -Path $Path | ConvertFrom-Json
+        
+        [int]$StatsCount = $Stats.Count
+    }catch{
+        Write-Error "$_"
+    }
+}
+
+
 function Get-GithubRepoStats{
     [CmdletBinding(SupportsShouldProcess)]
     param(
