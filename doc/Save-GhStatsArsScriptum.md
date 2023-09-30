@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-GithubAppCredentials
+# Save-GhStatsArsScriptum
 
 ## SYNOPSIS
 {{ Fill in the Synopsis }}
@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Get-GithubAppCredentials [-WhatIf] [-Confirm] [<CommonParameters>]
+Save-GhStatsArsScriptum [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION

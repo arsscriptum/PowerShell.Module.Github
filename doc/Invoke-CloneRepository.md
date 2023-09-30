@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-GithubAppCredentials
+# Invoke-CloneRepository
 
 ## SYNOPSIS
 {{ Fill in the Synopsis }}
@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Get-GithubAppCredentials [-WhatIf] [-Confirm] [<CommonParameters>]
+Invoke-CloneRepository [-Url] <String> [[-Path] <String>] [-Quiet] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -40,6 +40,51 @@ Aliases: cf
 
 Required: False
 Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Path
+Destination Directory
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases: p
+
+Required: False
+Position: 1
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Quiet
+{{ Fill Quiet Description }}
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: q
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Url
+Url
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases: u
+
+Required: True
+Position: 0
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

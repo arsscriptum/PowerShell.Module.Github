@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-GithubAppCredentials
+# Get-GhStatsRedditSupport
 
 ## SYNOPSIS
 {{ Fill in the Synopsis }}
@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Get-GithubAppCredentials [-WhatIf] [-Confirm] [<CommonParameters>]
+Get-GhStatsRedditSupport [[-Days] <Int32>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -40,6 +40,21 @@ Aliases: cf
 
 Required: False
 Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Days
+days
+
+```yaml
+Type: Int32
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 0
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

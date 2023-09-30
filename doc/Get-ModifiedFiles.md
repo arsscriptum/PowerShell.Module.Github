@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-GithubAppCredentials
+# Get-ModifiedFiles
 
 ## SYNOPSIS
 {{ Fill in the Synopsis }}
@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Get-GithubAppCredentials [-WhatIf] [-Confirm] [<CommonParameters>]
+Get-ModifiedFiles [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION

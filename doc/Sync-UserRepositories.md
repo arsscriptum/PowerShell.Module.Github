@@ -13,8 +13,9 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Sync-UserRepositories [-User] <String> [[-Path] <String>] [[-HostName] <String>] [-Force]
- [[-Exceptions] <Array>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Sync-UserRepositories [-Username] <String> [-DestinationPath] <String> [[-Exclude] <String[]>]
+ [-CreateRootFolder] [-ListOnly] [-Force] [-OpenAfterDownload] [-ShowGitOutput] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -46,23 +47,98 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Exceptions
-Host name in case user has multiple git accounts setup
+### -CreateRootFolder
+If set, this flag will make it so that a root folder will be created (named after the user to clone), under which the repositories will be cloned
 
 ```yaml
-Type: Array
+Type: SwitchParameter
 Parameter Sets: (All)
-Aliases:
+Aliases: c
 
 Required: False
-Position: 3
+Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -DestinationPath
+Destination directory
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases: d, dst
+
+Required: True
+Position: 1
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -Exclude
+Excluded repos
+
+```yaml
+Type: String[]
+Parameter Sets: (All)
+Aliases: x
+
+Required: False
+Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
 ### -Force
-Force clone (attempt) even if connection test fails
+Overwrite existing directories
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: f
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -ListOnly
+Simulation: dont clone, just list the operations to do and repositories to clone (equivalent to -WhatIf)
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: l
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -OpenAfterDownload
+Open file explorer after download
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: o
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -ShowGitOutput
+More outputs
 
 ```yaml
 Type: SwitchParameter
@@ -76,43 +152,13 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -HostName
-Host name in case user has multiple git accounts setup
+### -Username
+Username or owner of the repositories you want to clone
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 2
-Default value: None
-Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -Path
-Local path (must exist)
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 1
-Default value: None
-Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -User
-Github account username
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
+Aliases: u, usr
 
 Required: True
 Position: 0
@@ -144,9 +190,9 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ### System.String
 
-### System.Management.Automation.SwitchParameter
+### System.String[]
 
-### System.Array
+### System.Management.Automation.SwitchParameter
 
 ## OUTPUTS
 
