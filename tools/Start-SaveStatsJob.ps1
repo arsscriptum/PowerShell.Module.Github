@@ -13,17 +13,27 @@ function Start-SaveStatsJob{
     $SaveStatsScript = {
           param()
       
-        Import-Module 'PowerShell.Module.Github'
+        Import-Module 'PowerShell.Module.Github' *> "$ENV\Temp\test.out"
 
         try{
-
-            $LastUpdateTime= Get-Date
+            $id = 1
+            $First = $True
+            $LastUpdateTime = (Get-Date)
+            if($First -eq $True){
+                $First = $False
+                $LastUpdateTime = (Get-Date).AddMinutes(-10)
+            }
             while($True){
                 
                 Start-Sleep 5
                 [timespan]$Diff = (Get-Date) - $LastUpdateTime
-                if($Diff.Minutes -gt 120){
+                if($Diff.Minutes -gt 5){
+                    $StrDate = (Get-Date)
+                    Write-Host "[Update] num $id started on $StrDate"
                     Update-GithubSavedStats
+                    $StrDate = (Get-Date)
+                    Write-Host "[Update] num $id ended on $StrDate"
+                    $id++
                 }
             }
         }catch{
@@ -39,3 +49,4 @@ function Start-SaveStatsJob{
 
 
 
+Start-SaveStatsJob
