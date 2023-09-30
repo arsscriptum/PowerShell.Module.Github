@@ -49,5 +49,8 @@ function Start-SaveStatsJob{
 }
 
 
-
-Start-SaveStatsJob
+[int]$NumPwshProcess = get-process pwsh | Measure-Count
+if($NumPwshProcess -eq 1){
+    Write-Host "[Start-SaveStatsJob] Updating Repositories Stats" -f Red
+    Start-SaveStatsJob
+}
