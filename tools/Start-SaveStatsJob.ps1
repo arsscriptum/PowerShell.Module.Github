@@ -28,6 +28,7 @@ function Start-SaveStatsJob{
                 Start-Sleep 5
                 [timespan]$Diff = (Get-Date) - $LastUpdateTime
                 if($Diff.Minutes -gt 5){
+                    $LastUpdateTime = (Get-Date)
                     $StrDate = (Get-Date)
                     Write-Host "[Update] num $id started on $StrDate"
                     Update-GithubSavedStats
