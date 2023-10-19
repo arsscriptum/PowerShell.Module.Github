@@ -190,7 +190,7 @@ function Save-GhStatsRepository{
         
 
     }catch{
-        Write-Error "$_"
+        Show-ExceptionDetails $_ -ShowStack
     }
 }
 
@@ -212,7 +212,7 @@ function Get-GhStatsRepositoryCount{
         [int]$StatsCount = $Stats.Count
         $StatsCount
     }catch{
-        Write-Error "$_"
+        Show-ExceptionDetails $_ -ShowStack
     }
 }
 
@@ -240,7 +240,7 @@ function Get-GhStatsRepository{
         }
         $RetStats
     }catch{
-        Write-Error "$_"
+        Show-ExceptionDetails $_ -ShowStack
     }
 }
 
@@ -250,7 +250,7 @@ function Save-GhStatsRedditSupport{
     try{
         Save-GhStatsRepository -Repository "PowerShell.Reddit.Support"
     }catch{
-        Write-Error "$_"
+        Show-ExceptionDetails $_ -ShowStack
     }
 }
 
@@ -261,7 +261,7 @@ function Get-GhStatsRedditSupport{
     try{
         Get-GhStatsRepository -Repository "PowerShell.Reddit.Support"
     }catch{
-        Write-Error "$_"
+        Show-ExceptionDetails $_ -ShowStack
     }
 }
 
@@ -272,7 +272,7 @@ function Save-GhStatsArsScriptum{
     try{
         Save-GhStatsRepository -Repository "arsscriptum.github.io"
     }catch{
-        Write-Error "$_"
+        Show-ExceptionDetails $_ -ShowStack
     }
 }
 
@@ -283,7 +283,7 @@ function Get-GhStatsArsScriptum{
     try{
         Get-GhStatsRepository -Repository "arsscriptum.github.io"
     }catch{
-        Write-Error "$_"
+        Show-ExceptionDetails $_ -ShowStack
     }
 }
 
@@ -416,7 +416,7 @@ function Get-GhSavedStats{
                 
             $data
         }catch{
-            Write-Output "$_"
+           Show-ExceptionDetails $_ -ShowStack
     }
 }
 
@@ -447,7 +447,7 @@ function Update-GhSavedStats{
             Write-Progress -Activity "STATS" -Completed
             Get-GhSavedStats
         }catch{
-            Write-Output "$_"
+            Show-ExceptionDetails $_ -ShowStack
     }
 }
 
@@ -460,7 +460,7 @@ function Get-GhSavedStatsSorted{
             
             Get-GhSavedStats | sort -Property UniquesClones -Descending | Select Repository,UniquesClones,UniquesViews,SampleDate
         }catch{
-            Write-Output "$_"
+            Show-ExceptionDetails $_ -ShowStack
     }
 }
 
@@ -482,7 +482,7 @@ function Get-GhSavedStatsAllSamples{
             }
             $data
         }catch{
-            Write-Output "$_"
+            Show-ExceptionDetails $_ -ShowStack
     }
 }
 
