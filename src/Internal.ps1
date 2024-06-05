@@ -44,6 +44,25 @@ function Resolve-RepositoryUrl {    # NOEXPORT
 
 
 
+function Load-ProjectPage {  
+    [CmdletBinding(SupportsShouldProcess)]
+    param ()
+    try{
+        if(!(Get-Command "Get-GithubUrl" -ErrorAction Ignore)){ throw "missing Get-GithubUrl command" ; }
+        if(!(Get-Command "Get-ChromePath" -ErrorAction Ignore)){ throw "missing Get-ChromePath command" ; }
+        [string]$Url = ( ((Get-GithubUrl) -as [string]).Replace('.git','') )
+        [Uri]$TestUri = [Uri]$Url
+        [bool]$IsValid = (($TestUri.Host -eq "github.com") -And ($TestUri.IsAbsoluteUri -eq $True) -And ($TestUri.IsFile -eq $False) -And ($TestUri.IsLoopback -eq $False))
+        if($IsValid -eq $False){ throw "invalid url"; }
+        Write-Host "The project page url is `"$Url`"";
+        &(Get-ChromePath) "$Url"
+    } catch {
+        Show-ExceptionDetails($_) -ShowStack:$Global:DebugShowStack
+    }
+}
+
+
+
 function Split-RepositoryUrl {   # NOEXPORT
     [CmdletBinding(SupportsShouldProcess)]
     param (
