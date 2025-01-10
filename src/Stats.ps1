@@ -19,15 +19,11 @@ function Get-GhStatsViews{
         $AppCredz  = Get-GithubAppCredentials
         [String]$Url =  'https://api.github.com/repos/{0}/{1}/traffic/views?Per={2}' -f ($UserCredz.UserName),$Repository,$Per
  
-        $AuStr = 'bearer ' + (Get-GithubAccessToken)
+        $hearderz = Get-GithubAuthorizationHeader
         $Params = @{
             Uri             = $Url
             UserAgent       = Get-GithubModuleUserAgent
-            Headers         = @{
-                Authorization = $AuStr
-                "X-GhStats-Api-Version" = "2022-11-28"
-                "Accept" = "application/vnd.github+json" 
-            }
+            Headers         = $hearderz
             Method          = 'GET'
             UseBasicParsing = $true
         }      
@@ -37,6 +33,36 @@ function Get-GhStatsViews{
          Write-Verbose "Invoke-WebRequest Response: $Response"
 }
 
+function Get-GhStatsCodeFrequency{
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Mandatory=$true, HelpMessage="Repository")]
+        [ValidateNotNullOrEmpty()]
+        [String]$Repository
+    )   
+ 
+        $UserCredz = Get-GithubUserCredentials
+        $AppCredz  = Get-GithubAppCredentials
+        [String]$Url =  'https://api.github.com/repos/{0}/{1}/stats/code_frequency' -f ($UserCredz.UserName),$Repository
+        $hearderz = Get-GithubAuthorizationHeader
+        $hearderz = Get-GithubAuthorizationHeader
+        $Params = @{
+            Uri             = $Url
+            UserAgent       = Get-GithubModuleUserAgent
+            Headers         = $hearderz
+            Method          = 'GET'
+            UseBasicParsing = $true
+        }      
+
+         $Data = (Invoke-WebRequest  @Params).Content | ConvertFrom-Json  
+         
+         [pscustomobject]$res = [pscustomobject]@{
+            Timestamp  = $Data[0]
+            Additions  = $Data[1]          
+            Deletions  = $Data[2]
+        }
+         $res
+}
 
 
 function Get-GhStatsClones{
@@ -53,16 +79,12 @@ function Get-GhStatsClones{
         $UserCredz = Get-GithubUserCredentials
         $AppCredz  = Get-GithubAppCredentials
         [String]$Url =  'https://api.github.com/repos/{0}/{1}/traffic/clones?Per={2}' -f ($UserCredz.UserName),$Repository,$Per
-        $AuStr = 'bearer ' + (Get-GithubAccessToken)
+        $hearderz = Get-GithubAuthorizationHeader
         $Params = @{
             Uri             = $Url
     
             UserAgent       = Get-GithubModuleUserAgent
-            Headers         = @{
-                Authorization = $AuStr
-                "X-GhStats-Api-Version" = "2022-11-28"
-                "Accept" = "application/vnd.github+json" 
-            }
+            Headers         = $hearderz
             Method          = 'GET'
             UseBasicParsing = $true
         }      
@@ -87,16 +109,12 @@ function Get-GhStatsMostPopular{
         $UserCredz = Get-GithubUserCredentials
         $AppCredz  = Get-GithubAppCredentials
         [String]$Url =  'https://api.github.com/repos/{0}/{1}/traffic/popular/paths?Per={2}' -f ($UserCredz.UserName),$Repository,$Per
-        $AuStr = 'bearer ' + (Get-GithubAccessToken)
+        $hearderz = Get-GithubAuthorizationHeader
         $Params = @{
             Uri             = $Url
     
             UserAgent       = Get-GithubModuleUserAgent
-            Headers         = @{
-                Authorization = $AuStr
-                "X-GhStats-Api-Version" = "2022-11-28"
-                "Accept" = "application/vnd.github+json" 
-            }
+            Headers         = $hearderz
             Method          = 'GET'
             UseBasicParsing = $true
         }      
@@ -121,16 +139,12 @@ function Get-GhStatsTopReferrals{
         $UserCredz = Get-GithubUserCredentials
         $AppCredz  = Get-GithubAppCredentials
         [String]$Url =  'https://api.github.com/repos/{0}/{1}/traffic/popular/referrers' -f ($UserCredz.UserName),$Repository,$Per
-        $AuStr = 'bearer ' + (Get-GithubAccessToken)
+        $hearderz = Get-GithubAuthorizationHeader
         $Params = @{
             Uri             = $Url
     
             UserAgent       = Get-GithubModuleUserAgent
-            Headers         = @{
-                Authorization = $AuStr
-                "X-GhStats-Api-Version" = "2022-11-28"
-                "Accept" = "application/vnd.github+json" 
-            }
+            Headers         = $hearderz
             Method          = 'GET'
             UseBasicParsing = $true
         }      
@@ -147,7 +161,10 @@ function Save-GhStatsRepository{
     param(
         [Parameter(Mandatory=$true, HelpMessage="Repository")]
         [ValidateNotNullOrEmpty()]
-        [String]$Repository
+        [String]$Repository,
+        [Parameter(Mandatory=$false, HelpMessage="per day/week")]
+        [ValidateSet('day','week')]
+        [String]$Per='day'
     )    
     try{
         $NewFile = $False
@@ -155,11 +172,9 @@ function Save-GhStatsRepository{
         if(!(Test-Path $Path)){
             $NewFile = $True
         }
-
         $d = (Get-Date).AddDays(-1)
-
-        $views_stats = Get-GhStatsViews -Repository "$Repository" -Per week | Select  -ExpandProperty views 
-        $clone_stats = Get-GhStatsClones -Repository "$Repository" -Per week | Select  -ExpandProperty clones 
+        $views_stats = Get-GhStatsViews -Repository "$Repository" -Per $Per | Select  -ExpandProperty views 
+        $clone_stats = Get-GhStatsClones -Repository "$Repository" -Per $Per | Select  -ExpandProperty clones 
         [uint32]$UniquesViewsSum = $views_stats | Select -ExpandProperty uniques |  Measure-Object -Sum | Select  -ExpandProperty Sum
         [uint32]$ViewsCountSum = $views_stats | Select -ExpandProperty count |  Measure-Object -Sum | Select  -ExpandProperty Sum
         [uint32]$UniquesClonesSum = $clone_stats | Select -ExpandProperty uniques | Measure-Object -Sum  | Select  -ExpandProperty Sum

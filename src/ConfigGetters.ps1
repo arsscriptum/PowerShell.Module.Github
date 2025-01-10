@@ -20,29 +20,25 @@ function Get-IsLocalUser {    # NOEXPORT
 
 
 
-function Get-AuthorizationHeader {   # NOEXPORT
-    [CmdletBinding()]
-    [OutputType([System.String])]
-    param (
-        [Parameter(
-            Mandatory = $true,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true
-        )]
-        [PSCredential]
-        [System.Management.Automation.CredentialAttribute()]$Credential
-    )
+function Get-GithubAuthorizationHeader {   
+    [CmdletBinding(SupportsShouldProcess)]
+    param ()
+    $Credential = 
+    $TokenType = Get-GithubTokenType
+    $token=''
+    if($TokenType -eq 'legacy'){
+        $token = Get-GithubAccessToken
+    }else{
+        $token = Get-GithubFinedGrainToken
+    }
     
-    process {
-        'Basic {0}' -f (
-            [System.Convert]::ToBase64String(
-                [System.Text.Encoding]::ASCII.GetBytes(
-                    ('{0}:{1}' -f $Credential.UserName, $Credential.GetNetworkCredential().Password)
-                )# End [System.Text.Encoding]::ASCII.GetBytes(
-            )# End [System.Convert]::ToBase64String(
-        )# End 'Basic {0}' -f
-    }# End process
-}# End Get-AuthorizationHeader
+    $Headers = @{
+        "Authorization" = "token $token"
+        "X-GitHub-Api-Version" = "2022-11-28"
+        "Accept" = "application/vnd.github+json" 
+    }
+    $Headers
+}
 
 
 
@@ -104,6 +100,54 @@ function Get-GithubAccessToken {
 
         $TokenPresent = Test-RegistryValue -Path "$RegPath" -Entry 'access_token'
         Get-RegistryValue -Path "$RegPath" -Entry 'access_token'
+    }catch{
+        Show-ExceptionDetails $_
+    }
+ }
+
+
+function Get-GithubFinedGrainToken {    
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+         [Parameter(Mandatory=$false,ValueFromPipeline=$true, 
+            HelpMessage="Github account username") ]
+         [ValidateNotNullOrEmpty()]
+         [string]$User
+    )
+    try{
+        if($PSBoundParameters.ContainsKey('User') -eq $False){
+            $User = (Get-GithubUserCredentials).UserName
+            if([string]::IsNullOrEmpty($User)){ throw "GithubUserCredentials not set. Use Set-GithubUserCredentials or Initialize-GithubModule" }
+        }
+
+        $BaseRegPath = Get-GithubModuleRegistryPath
+        if( $RegPath -eq "" ) { throw "not in module"; return ;}
+    
+        $RegPath = Join-Path $BaseRegPath $User
+
+        $TokenPresent = Test-RegistryValue -Path "$RegPath" -Entry 'fine-grained-pat'
+        Get-RegistryValue -Path "$RegPath" -Entry 'fine-grained-pat'
+    }catch{
+        Show-ExceptionDetails $_
+    }
+ }
+
+
+function Get-GithubTokenType {   
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+    try{
+
+        $User = (Get-GithubUserCredentials).UserName
+        if([string]::IsNullOrEmpty($User)){ throw "GithubUserCredentials not set. Use Set-GithubUserCredentials or Initialize-GithubModule" }
+
+        $BaseRegPath = Get-GithubModuleRegistryPath
+        if( $RegPath -eq "" ) { throw "not in module"; return ;}
+    
+        $RegPath = Join-Path $BaseRegPath $User
+
+        $TokenPresent = Test-RegistryValue -Path "$RegPath" -Entry 'token_type'
+        Get-RegistryValue -Path "$RegPath" -Entry 'token_type'
     }catch{
         Show-ExceptionDetails $_
     }

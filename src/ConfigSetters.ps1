@@ -1,19 +1,9 @@
 
-<#
-#̷𝓍   𝓐𝓡𝓢 𝓢𝓒𝓡𝓘𝓟𝓣𝓤𝓜
-#̷𝓍   🇵​​​​​🇴​​​​​🇼​​​​​🇪​​​​​🇷​​​​​🇸​​​​​🇭​​​​​🇪​​​​​🇱​​​​​🇱​​​​​ 🇸​​​​​🇨​​​​​🇷​​​​​🇮​​​​​🇵​​​​​🇹​​​​​ 🇧​​​​​🇾​​​​​ 🇬​​​​​🇺​​​​​🇮​​​​​🇱​​​​​🇱​​​​​🇦​​​​​🇺​​​​​🇲​​​​​🇪​​​​​🇵​​​​​🇱​​​​​🇦​​​​​🇳​​​​​🇹​​​​​🇪​​​​​.🇶​​​​​🇨​​​​​@🇬​​​​​🇲​​​​​🇦​​​​​🇮​​​​​🇱​​​​​.🇨​​​​​🇴​​​​​🇲​​​​​
-#̷𝓍   
-#̷𝓍   PowerShell GitHub Module
-#>
 
-
-
-function Set-GithubAccessToken{   # NOEXPORT
+function Set-GithubAccessToken{ 
     [CmdletBinding(SupportsShouldProcess)]
     param(
-        [Parameter(Mandatory=$false, ValueFromPipeline=$true, HelpMessage="Overwrite if present")]
-        [String]$Username,
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true, HelpMessage="Overwrite if present")]
+        [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         [String]$Token    
     )
@@ -21,10 +11,7 @@ function Set-GithubAccessToken{   # NOEXPORT
         $RegPath = $BaseRegPath = Get-GithubModuleRegistryPath
         if( $RegPath -eq "" ) { throw "not in module"; }
         
-        if($PSBoundParameters.ContainsKey('Username') -eq $False){
-            $Username = (Get-GithubUserCredentials).UserName
-        }
-         
+        $Username = (Get-GithubUserCredentials).UserName
         if([string]::IsNullOrEmpty($Username)){ throw "GithubUserCredentials not set. Use Set-GithubUserCredentials or Initialize-GithubModule" }
 
         $RegPath = Join-Path $BaseRegPath $Username
@@ -37,6 +24,57 @@ function Set-GithubAccessToken{   # NOEXPORT
     }
 }
 
+function Set-GithubFinedGrainToken{ 
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [String]$Token    
+    )
+    try{
+        $RegPath = $BaseRegPath = Get-GithubModuleRegistryPath
+        if( $RegPath -eq "" ) { throw "not in module"; }
+        
+        $Username = (Get-GithubUserCredentials).UserName
+        
+         
+        if([string]::IsNullOrEmpty($Username)){ throw "GithubUserCredentials not set. Use Set-GithubUserCredentials or Initialize-GithubModule" }
+
+        $RegPath = Join-Path $BaseRegPath $Username
+        Write-Verbose "set $RegPath fine-grained-pat"
+        Remove-RegistryValue -Path "$RegPath" -Name 'fine-grained-pat'
+        New-RegistryValue -Path "$RegPath" -Name 'fine-grained-pat' -Value $Token -Type 'string'
+        
+    }catch{
+         Show-ExceptionDetails $_
+    }
+}
+
+
+function Set-GithubTokenType{ 
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Mandatory=$true)]
+        [ValidateSet('legacy','finegrained')]
+        [String]$TokenType    
+    )
+    try{
+        $RegPath = $BaseRegPath = Get-GithubModuleRegistryPath
+        if( $RegPath -eq "" ) { throw "not in module"; }
+        
+
+        $Username = (Get-GithubUserCredentials).UserName
+        if([string]::IsNullOrEmpty($Username)){ throw "GithubUserCredentials not set. Use Set-GithubUserCredentials or Initialize-GithubModule" }
+
+        $RegPath = Join-Path $BaseRegPath $Username
+       
+        Remove-RegistryValue -Path "$RegPath" -Name 'token_type'
+        New-RegistryValue -Path "$RegPath" -Name 'token_type' -Value $TokenType -Type 'string'
+        
+    }catch{
+         Show-ExceptionDetails $_
+    }
+}
 
 
 function Set-GithubUserCredentials {    # NOEXPORT

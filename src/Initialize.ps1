@@ -48,7 +48,9 @@ function Initialize-GithubModule{
         [Parameter(Mandatory=$true,Position=1)][ValidateNotNullOrEmpty()][String]$Password,
         [Parameter(Mandatory=$true,Position=2)][ValidateNotNullOrEmpty()][String]$Client,
         [Parameter(Mandatory=$true,Position=3)][ValidateNotNullOrEmpty()][String]$Secret,
-        [Parameter(Mandatory=$true,Position=4)][ValidateNotNullOrEmpty()][String]$Token
+        [Parameter(Mandatory=$true,Position=4)][ValidateNotNullOrEmpty()][String]$Token,
+        [Parameter(Mandatory=$true,Position=5)][ValidateSet('legacy','finegrained')][String]$TokenType,
+        [Parameter(Mandatory=$true,Position=6)][ValidateNotNullOrEmpty()][String]$FineGrainedToken
     ) 
 
     $Result = $True
@@ -57,8 +59,11 @@ function Initialize-GithubModule{
     Write-Verbose "Initialize-GithubModule => Set-GithubUserCredentials -Username $Username -Password $Password"
     $Result = $Result -and (Set-GithubUserCredentials -Username $Username -Password $Password)
     Write-Verbose "Initialize-GithubModule => Set-GithubAccessToken -Username $Username -Token $Token"
-    $Result = $Result -and (Set-GithubAccessToken -Username $Username -Token $Token)
+    $Result = $Result -and (Set-GithubAccessToken -Token $Token)
     if(!$Result) { throw "Error" }
+
+    Set-GithubFinedGrainToken -Token $FineGrainedToken
+    Set-GithubTokenType $TokenType
 }
 
 
