@@ -119,7 +119,11 @@ function Get-GhWeeklyCommitActivity{
 
 function Get-GhLastYearCommitActivity{
     [CmdletBinding(SupportsShouldProcess)]
-    param()   
+    param(
+        [Parameter(Mandatory=$true, HelpMessage="Repository")]
+        [ValidateNotNullOrEmpty()]
+        [String]$Repository
+    )  
  
         $UserCredz = Get-GithubUserCredentials
         $AppCredz  = Get-GithubAppCredentials
@@ -141,7 +145,11 @@ function Get-GhLastYearCommitActivity{
 
 function Get-GhAllContributorsActivity{
     [CmdletBinding(SupportsShouldProcess)]
-    param()   
+    param(
+        [Parameter(Mandatory=$true, HelpMessage="Repository")]
+        [ValidateNotNullOrEmpty()]
+        [String]$Repository
+    )   
  
         $UserCredz = Get-GithubUserCredentials
         $AppCredz  = Get-GithubAppCredentials
@@ -162,7 +170,11 @@ function Get-GhAllContributorsActivity{
 
 function Get-GhWeeklyCommitsCount{
     [CmdletBinding(SupportsShouldProcess)]
-    param()   
+    param(
+        [Parameter(Mandatory=$true, HelpMessage="Repository")]
+        [ValidateNotNullOrEmpty()]
+        [String]$Repository
+    )   
  
         $UserCredz = Get-GithubUserCredentials
         $AppCredz  = Get-GithubAppCredentials
@@ -183,7 +195,11 @@ function Get-GhWeeklyCommitsCount{
 
 function Get-GhHourlyCommitsCount{
     [CmdletBinding(SupportsShouldProcess)]
-    param()   
+    param(
+        [Parameter(Mandatory=$true, HelpMessage="Repository")]
+        [ValidateNotNullOrEmpty()]
+        [String]$Repository
+    )  
  
         $UserCredz = Get-GithubUserCredentials
         $AppCredz  = Get-GithubAppCredentials
