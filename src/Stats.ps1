@@ -45,7 +45,7 @@ function Get-GhStatsCodeFrequency{
         $AppCredz  = Get-GithubAppCredentials
         [String]$Url =  'https://api.github.com/repos/{0}/{1}/stats/code_frequency' -f ($UserCredz.UserName),$Repository
         $hearderz = Get-GithubAuthorizationHeader
-        $hearderz = Get-GithubAuthorizationHeader
+        
         $Params = @{
             Uri             = $Url
             UserAgent       = Get-GithubModuleUserAgent

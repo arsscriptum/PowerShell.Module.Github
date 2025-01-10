@@ -86,22 +86,9 @@ function Get-Repositories {
         Write-verbose "RequestUrl    $RequestUrl"
 
         $Response = ''
-        $Token= Get-GithubAccessToken
         $UserCredz = Get-GithubUserCredentials
-        $AppCredz = Get-GithubAppCredentials
-
-        $headers = @{
-            "Content-Type"= "application/x-www-form-urlencoded"
-            "Authorization" = $Token
-        }
-
-        $AccessToken = $Token
-        $HeadersData = @{
-            'Accept' =  'application/vnd.github.v3+json'
-            'User-Agent' = Get-GithubModuleUserAgent
-        }
-        $HeadersData['Authorization'] = "token $AccessToken"
-
+        $HeadersData = Get-GithubAuthorizationHeader
+         
         $BodyData = @{
             grant_type  = 'password'
             username    = $UserCredz.UserName
@@ -312,21 +299,8 @@ function Get-RepositoryPackage{
         $RequestUrl="https://github.com/repos/{0}/{1}/{2}ball/{3}" -f $Username, $Repository, $Type, $Branch
      
         $Response = ''
-        $Token= Get-GithubAccessToken
         $UserCredz = Get-GithubUserCredentials
-        $AppCredz = Get-GithubAppCredentials
-
-        $headers = @{
-            "Content-Type"= "application/x-www-form-urlencoded"
-            "Authorization" = $Token
-        }
-
-        $AccessToken = $Token
-        $HeadersData = @{
-            'Accept' =  'application/vnd.github.v3+json'
-            'User-Agent' = Get-GithubModuleUserAgent
-        }
-        $HeadersData['Authorization'] = "token $AccessToken"
+        $HeadersData = Get-GithubAuthorizationHeader
 
         $BodyData = @{
             grant_type  = 'password'

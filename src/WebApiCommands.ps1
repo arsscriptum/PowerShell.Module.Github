@@ -23,12 +23,8 @@ function New-GitHubRepository {  # NOEXPORT
         
         $AcceptHeader = 'application/vnd.github.v3+json'
         $ContentType= "application/json"
-        # 'Accept' = $AcceptHeader
-        $headers = @{
-                'User-Agent' = 'PowerShell'
-        }
-        $headers['Authorization'] = "token $AccessToken"
-        $headers.Add("Content-Type", $ContentType)
+
+        $HeadersData = Get-GithubAuthorizationHeader
         $hashBody = @{
             'name' = $Name
             'description' = 'New Repo'
@@ -45,7 +41,7 @@ function New-GitHubRepository {  # NOEXPORT
             Method = "Post"
             body = $body 
             ContentType = "application/json"
-            Headers = $headers
+            Headers = $HeadersData
             UseBasicParsing = $True
             DisableKeepAlive = $True
         }
