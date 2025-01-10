@@ -95,6 +95,113 @@ function Get-GhStatsClones{
 }
 
 
+function Get-GhWeeklyCommitActivity{
+    [CmdletBinding(SupportsShouldProcess)]
+    param()   
+ 
+        $UserCredz = Get-GithubUserCredentials
+        $AppCredz  = Get-GithubAppCredentials
+        [String]$Url =  'https://api.github.com/repos/{0}/{1}/stats/code_frequency' -f ($UserCredz.UserName),$Repository
+        $hearderz = Get-GithubAuthorizationHeader
+        $Params = @{
+            Uri             = $Url
+            UserAgent       = Get-GithubModuleUserAgent
+            Headers         = $hearderz
+            Method          = 'GET'
+            UseBasicParsing = $true
+        }      
+
+        $Response = (Invoke-WebRequest  @Params).Content | ConvertFrom-Json  
+        $Response
+        Write-Verbose "Invoke-WebRequest Response: $Response"
+}
+
+
+function Get-GhLastYearCommitActivity{
+    [CmdletBinding(SupportsShouldProcess)]
+    param()   
+ 
+        $UserCredz = Get-GithubUserCredentials
+        $AppCredz  = Get-GithubAppCredentials
+        [String]$Url =  'https://api.github.com/repos/{0}/{1}/stats/commit_activity' -f ($UserCredz.UserName),$Repository
+        $hearderz = Get-GithubAuthorizationHeader
+        $Params = @{
+            Uri             = $Url
+            UserAgent       = Get-GithubModuleUserAgent
+            Headers         = $hearderz
+            Method          = 'GET'
+            UseBasicParsing = $true
+        }      
+
+        $Response = (Invoke-WebRequest  @Params).Content | ConvertFrom-Json  
+        $Response
+        Write-Verbose "Invoke-WebRequest Response: $Response"
+}
+
+
+function Get-GhAllContributorsActivity{
+    [CmdletBinding(SupportsShouldProcess)]
+    param()   
+ 
+        $UserCredz = Get-GithubUserCredentials
+        $AppCredz  = Get-GithubAppCredentials
+        [String]$Url =  'https://api.github.com/repos/{0}/{1}/stats/contributors' -f ($UserCredz.UserName),$Repository
+        $hearderz = Get-GithubAuthorizationHeader
+        $Params = @{
+            Uri             = $Url
+            UserAgent       = Get-GithubModuleUserAgent
+            Headers         = $hearderz
+            Method          = 'GET'
+            UseBasicParsing = $true
+        }      
+
+        $Response = (Invoke-WebRequest  @Params).Content | ConvertFrom-Json  
+        $Response
+        Write-Verbose "Invoke-WebRequest Response: $Response"
+}
+
+function Get-GhWeeklyCommitsCount{
+    [CmdletBinding(SupportsShouldProcess)]
+    param()   
+ 
+        $UserCredz = Get-GithubUserCredentials
+        $AppCredz  = Get-GithubAppCredentials
+        [String]$Url =  'https://api.github.com/repos/{0}/{1}/stats/participation' -f ($UserCredz.UserName),$Repository
+        $hearderz = Get-GithubAuthorizationHeader
+        $Params = @{
+            Uri             = $Url
+            UserAgent       = Get-GithubModuleUserAgent
+            Headers         = $hearderz
+            Method          = 'GET'
+            UseBasicParsing = $true
+        }      
+
+        $Response = (Invoke-WebRequest  @Params).Content | ConvertFrom-Json  
+        $Response
+        Write-Verbose "Invoke-WebRequest Response: $Response"
+}
+
+function Get-GhHourlyCommitsCount{
+    [CmdletBinding(SupportsShouldProcess)]
+    param()   
+ 
+        $UserCredz = Get-GithubUserCredentials
+        $AppCredz  = Get-GithubAppCredentials
+        [String]$Url =  'https://api.github.com/repos/{0}/{1}/stats/punch_card' -f ($UserCredz.UserName),$Repository
+        $hearderz = Get-GithubAuthorizationHeader
+        $Params = @{
+            Uri             = $Url
+            UserAgent       = Get-GithubModuleUserAgent
+            Headers         = $hearderz
+            Method          = 'GET'
+            UseBasicParsing = $true
+        }      
+
+        $Response = (Invoke-WebRequest  @Params).Content | ConvertFrom-Json  
+        $Response
+        Write-Verbose "Invoke-WebRequest Response: $Response"
+}
+
 function Get-GhStatsMostPopular{
     [CmdletBinding(SupportsShouldProcess)]
     param(
